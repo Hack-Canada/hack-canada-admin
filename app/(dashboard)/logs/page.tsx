@@ -7,10 +7,11 @@ import { LogsStats } from "@/components/logs/LogsStats";
 import { LogList } from "@/components/logs/LogList";
 
 interface LogsPageProps {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-const LogsPage = async ({ searchParams }: LogsPageProps) => {
+const LogsPage = async (props: LogsPageProps) => {
+  const searchParams = await props.searchParams;
   const { logs, totalLogs, start, params } = await getLogs({
     page: searchParams["page"] as string,
     perPage: searchParams["perPage"] as string,

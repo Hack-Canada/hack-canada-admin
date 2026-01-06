@@ -13,13 +13,14 @@ import { isAdmin } from "@/lib/utils";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 
-const HackerPage = async ({
-  params,
-}: {
-  params: {
-    id: string;
-  };
-}) => {
+const HackerPage = async (
+  props: {
+    params: Promise<{
+      id: string;
+    }>;
+  }
+) => {
+  const params = await props.params;
   const { id } = params;
   const user = await getCurrentUser();
   const currentUser = user;

@@ -10,10 +10,11 @@ import { UsersSearchControls } from "@/components/UsersSearchControls";
 import { getUsers } from "@/data/users-page";
 
 interface UsersPageProps {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-const UsersPage = async ({ searchParams }: UsersPageProps) => {
+const UsersPage = async (props: UsersPageProps) => {
+  const searchParams = await props.searchParams;
   const user = await getCurrentUser();
 
   if (!user || user.role !== "admin") {

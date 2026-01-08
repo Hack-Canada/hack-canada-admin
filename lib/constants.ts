@@ -34,6 +34,11 @@ export const navLinks: NavigationLink[] = [
     href: "/reviewers/leaderboards",
   },
   {
+    name: "Challenge Management",
+    href: "/challenges",
+    adminOnly: true,
+  },
+  {
     name: "Role Management",
     href: "/role-management",
     adminOnly: true,

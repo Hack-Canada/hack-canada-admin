@@ -10,6 +10,7 @@ import {
   ScrollText,
   Clipboard,
   Gavel,
+  Target,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 
@@ -22,6 +23,7 @@ const iconMap = {
   "Reviewer Leaderboards": BarChart3,
   "Role Management": ShieldCheck,
   Logs: ScrollText,
+  "Challenge Management": Target,
 };
 
 interface NavLinksProps {

@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
 
     await db.insert(challenges).values({
       ...data,
-      maxCompletions: data.maxCompletions || null,
+      maxCompletions: data.maxCompletions ?? null,
       hints: data.hints || [],
     });
 

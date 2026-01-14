@@ -38,6 +38,8 @@ yarn-error.log*
 .env.*
 .env
 bun.lock
+.env.*
+!.env.example
 
 # vercel
 .vercel

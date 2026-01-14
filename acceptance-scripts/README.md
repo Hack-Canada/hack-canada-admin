@@ -2,6 +2,7 @@
 
 This directory contains scripts for processing applicant acceptances and sending acceptance emails. The entire process is handled through a single command.
 
+
 ## Prerequisites
 
 1. Ensure you have Node.js installed
@@ -69,3 +70,6 @@ The script provides real-time console output showing:
 - Current applicant status
 - Success/failure of each operation
 - Final summary with success/failure counts
+
+## Challenges
+ - Admins can create a challenge

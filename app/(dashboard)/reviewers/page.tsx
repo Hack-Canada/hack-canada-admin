@@ -14,11 +14,12 @@ import PageBanner from "@/components/PageBanner";
 import ReviewerStats from "@/components/review/ReviewerStats";
 import { getReviewers, getReviewerStats } from "@/lib/services/reviewer-stats";
 
-export default async function ReviewerStatsPage({
-  searchParams,
-}: {
-  searchParams: { reviewer?: string };
-}) {
+export default async function ReviewerStatsPage(
+  props: {
+    searchParams: Promise<{ reviewer?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const user = await getCurrentUser();
 
   if (!user?.id || !isAdmin(user.role)) {

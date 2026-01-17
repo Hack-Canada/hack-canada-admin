@@ -12,12 +12,11 @@ import { RESULTS_PER_PAGE } from "@/lib/constants";
 import { count } from "drizzle-orm";
 
 interface AdminApplicationsPageProps {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function AdminApplicationsPage({
-  searchParams,
-}: AdminApplicationsPageProps) {
+export default async function AdminApplicationsPage(props: AdminApplicationsPageProps) {
+  const searchParams = await props.searchParams;
   const user = await getCurrentUser();
 
   if (!user?.id || !isAdmin(user.role)) {

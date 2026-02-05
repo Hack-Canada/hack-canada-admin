@@ -14,6 +14,9 @@ export const challengeSchema = z.object({
     .min(1, "Submission instructions are required"),
   maxCompletions: z.number().nullable().optional(),
   enabled: z.boolean().default(true),
+  deadlineStart: z.coerce.date().optional(),
+  deadlineEnd: z.coerce.date().optional(),
+  startTime: z.coerce.date().optional(),
 });
 
 export type ChallengeInput = z.infer<typeof challengeSchema>;

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/auth";
-import { count, eq } from "drizzle-orm";
+import { count, eq, getTableColumns } from "drizzle-orm";
 
 import { db } from "@/lib/db";
 import { challenges, challengesSubmitted } from "@/lib/db/schema";
@@ -19,19 +19,7 @@ export default async function AdminPage() {
 
   const challengesData = await db
     .select({
-      id: challenges.id,
-      name: challenges.name,
-      category: challenges.category,
-      points: challenges.points,
-      difficulty: challenges.difficulty,
-
-      shortDescription: challenges.shortDescription,
-      instructions: challenges.instructions,
-      hints: challenges.hints,
-      qrCode: challenges.qrCode,
-      submissionInstructions: challenges.submissionInstructions,
-      maxCompletions: challenges.maxCompletions,
-      enabled: challenges.enabled,
+      ...getTableColumns(challenges),
       currentCompletions: count(challengesSubmitted.id),
     })
     .from(challenges)

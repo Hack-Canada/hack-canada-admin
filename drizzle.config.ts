@@ -1,6 +1,7 @@
 import { defineConfig } from "drizzle-kit";
+import { loadEnvConfig } from "@next/env";
 
-console.log(process.env.DATABASE_URL);
+loadEnvConfig(process.cwd());
 
 export default defineConfig({
   dialect: "postgresql",

@@ -16,7 +16,7 @@ export const challengeSchema = z.object({
   enabled: z.boolean().default(true),
   deadlineStart: z.coerce.date().optional(),
   deadlineEnd: z.coerce.date().optional(),
-  startTime: z.coerce.date().optional(),
+  showTime: z.coerce.date().optional(),
 });
 
 export type ChallengeInput = z.infer<typeof challengeSchema>;

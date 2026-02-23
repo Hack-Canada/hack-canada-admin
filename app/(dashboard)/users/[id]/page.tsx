@@ -3,6 +3,7 @@ import Container from "@/components/Container";
 import PageBanner from "@/components/PageBanner";
 import UserActions from "@/components/UserActions";
 import UserInfo from "@/components/UserInfo";
+import UserReviewHistory from "@/components/UserReviewHistory";
 import { getUserById } from "@/data/user";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -37,6 +38,7 @@ const UserPage = async ({
       <div className="flex space-y-6 max-xl:flex-col md:space-y-8 xl:space-x-8 xl:space-y-0">
         <div className="w-full space-y-6 md:space-y-8 xl:max-w-screen-md">
           <UserInfo user={user} />
+          <UserReviewHistory userId={user.id} />
         </div>
         {user && (
           <UserActions

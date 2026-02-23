@@ -9,7 +9,7 @@ import { SES } from "@aws-sdk/client-ses";
 import { render } from "@react-email/render";
 import RSVPReminder from "@/components/Emails/RSVPReminder";
 
-const ses = new SES({ region: process.env.AWS_REGION });
+const ses = new SES({ region: process.env.AWS_SES_REGION });
 
 export const sendEmail = async (to: string, subject: string, body: string) => {
   const params = {

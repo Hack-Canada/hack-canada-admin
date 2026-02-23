@@ -4,6 +4,7 @@ import LevelOfStudyData from "@/components/Charts/LevelOfStudy/LevelOfStudyData"
 import ProgramData from "@/components/Charts/Program/ProgramData";
 import RaceData from "@/components/Charts/Race/RaceData";
 import SchoolData from "@/components/Charts/School/SchoolData";
+import TShirtData from "@/components/Charts/TShirt/TShirtData";
 import Container from "@/components/Container";
 import { db } from "@/lib/db";
 import { hackerApplications, users } from "@/lib/db/schema";
@@ -77,6 +78,7 @@ const StatisticsPage = async () => {
           applicantsCount={applications.count}
           data={applicationData}
         />
+        <TShirtData />
       </div>
     </Container>
   );

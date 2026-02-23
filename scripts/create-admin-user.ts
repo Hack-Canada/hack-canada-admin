@@ -81,6 +81,3 @@ if (!name || !email || !password) {
 }
 
 createAdminUser(name, email, password);
-
-
-

@@ -2,6 +2,7 @@ import { formatDate, getResumeUrl } from "@/lib/utils";
 import {
   User as UserIcon,
   Mail,
+  Phone,
   Calendar,
   School,
   FileCheck,
@@ -66,11 +67,13 @@ const ApplicationInfo = ({ hacker, hideBackgroundInfo }: Props) => {
         <div className="grid w-full gap-y-3">
           {/* Personal Information */}
           <h3 className="mt-2 text-lg font-semibold">Personal Information</h3>
-          <InfoRow
-            label="ID"
-            value={hacker.id}
-            icon={<UserIcon className="size-4" />}
-          />
+          {!hideBackgroundInfo && (
+            <InfoRow
+              label="ID"
+              value={hacker.id}
+              icon={<UserIcon className="size-4" />}
+            />
+          )}
           <InfoRow
             label="First Name"
             value={hacker.firstName || <EmptyValue />}
@@ -91,6 +94,13 @@ const ApplicationInfo = ({ hacker, hideBackgroundInfo }: Props) => {
             value={hacker.age?.toString() || <EmptyValue />}
             icon={<CircleUserRound className="size-4" />}
           />
+          {!hideBackgroundInfo && (
+            <InfoRow
+              label="Phone Number"
+              value={hacker.phoneNumber || <EmptyValue />}
+              icon={<Phone className="size-4" />}
+            />
+          )}
           {!hideBackgroundInfo && (
             <InfoRow
               label="Pronouns"
@@ -214,11 +224,13 @@ const ApplicationInfo = ({ hacker, hideBackgroundInfo }: Props) => {
             }
             icon={<FileSpreadsheet className="size-4" />}
           />
-          <InfoRow
-            label="Share Resume"
-            value={hacker.shareResume ? "Yes" : "No"}
-            icon={<FileCheck className="size-4" />}
-          />
+          {!hideBackgroundInfo && (
+            <InfoRow
+              label="Share Resume"
+              value={hacker.shareResume ? "Yes" : "No"}
+              icon={<FileCheck className="size-4" />}
+            />
+          )}
 
           {/* Experience */}
           <h3 className="mt-4 text-lg font-semibold">Experience</h3>
@@ -236,7 +248,7 @@ const ApplicationInfo = ({ hacker, hideBackgroundInfo }: Props) => {
           {/* Short Answer Questions */}
           <h3 className="mt-4 text-lg font-semibold">Short Answers</h3>
           <InfoRow
-            label="Are you concerned that AI will take over or impact a career that you were looking forward to pursuing?"
+            label="What's the coolest project you've ever built? Every project has a story. What problem were you trying to solve, and how does your creation tackle it? Take us behind the scenes, what technologies power it, what obstacles did you face, and what 'aha' moments got you through? Share your links (GitHub, demo, video, etc.) so we can see it in action"
             value={
               hacker.shortAnswer1 || (
                 <EmptyValue className="text-base md:text-lg" />
@@ -246,7 +258,7 @@ const ApplicationInfo = ({ hacker, hideBackgroundInfo }: Props) => {
             longAnswer
           />
           <InfoRow
-            label="What inspired you to start participating in hackathons, and what motivates you to dedicate your weekends to them?"
+            label="What would help you most in continuing your project after the hackathon? (e.g., one-on-one meetings with sponsors, mentorship, cloud credits, introductions to investors or partners, additional prizes, incubator access, or technical support)"
             value={
               hacker.shortAnswer2 || (
                 <EmptyValue className="text-base md:text-lg" />
@@ -255,35 +267,51 @@ const ApplicationInfo = ({ hacker, hideBackgroundInfo }: Props) => {
             icon={<MessageSquare className="size-4" />}
             longAnswer
           />
+          <InfoRow
+            label="How would you describe your 'builder style'? (e.g., The Architect who structures the logic, The Sprinter who writes the code, The Strategist who connects the project to the ecosystem, or The Polymath who fills the gaps)"
+            value={
+              hacker.shortAnswer3 || (
+                <EmptyValue className="text-base md:text-lg" />
+              )
+            }
+            icon={<MessageSquare className="size-4" />}
+            longAnswer
+          />
 
           {/* Application Status */}
-          <h3 className="mt-4 text-lg font-semibold">Application Details</h3>
-          <InfoRow
-            label="Submission Status"
-            value={hacker.submissionStatus || <EmptyValue />}
-            icon={<Clock className="size-4" />}
-          />
-          <InfoRow
-            label="Internal Result"
-            value={hacker.internalResult || <EmptyValue />}
-            icon={<FileCheck className="size-4" />}
-          />
-          <InfoRow
-            label="Created At"
-            value={formatDate(hacker.createdAt.toString())}
-            icon={<Calendar className="size-4" />}
-          />
-          <InfoRow
-            label="Last Updated"
-            value={formatDate(hacker.updatedAt.toString())}
-            icon={<Calendar className="size-4" />}
-          />
-          {hacker.internalNotes && (
-            <InfoRow
-              label="Internal Notes"
-              value={hacker.internalNotes}
-              icon={<MessageSquare className="size-4" />}
-            />
+          {!hideBackgroundInfo && (
+            <>
+              <h3 className="mt-4 text-lg font-semibold">
+                Application Details
+              </h3>
+              <InfoRow
+                label="Submission Status"
+                value={hacker.submissionStatus || <EmptyValue />}
+                icon={<Clock className="size-4" />}
+              />
+              <InfoRow
+                label="Internal Result"
+                value={hacker.internalResult || <EmptyValue />}
+                icon={<FileCheck className="size-4" />}
+              />
+              <InfoRow
+                label="Created At"
+                value={formatDate(hacker.createdAt.toString())}
+                icon={<Calendar className="size-4" />}
+              />
+              <InfoRow
+                label="Last Updated"
+                value={formatDate(hacker.updatedAt.toString())}
+                icon={<Calendar className="size-4" />}
+              />
+              {hacker.internalNotes && (
+                <InfoRow
+                  label="Internal Notes"
+                  value={hacker.internalNotes}
+                  icon={<MessageSquare className="size-4" />}
+                />
+              )}
+            </>
           )}
         </div>
       </CardContent>

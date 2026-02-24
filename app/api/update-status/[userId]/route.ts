@@ -15,10 +15,8 @@ const updateStatusSchema = z.object({
   status: z.enum(["accepted", "rejected", "waitlisted"]),
 });
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { userId: string } },
-): Promise<NextResponse<ApiResponse>> {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ userId: string }> }): Promise<NextResponse<ApiResponse>> {
+  const params = await props.params;
   try {
     const currentUser = await getCurrentUser();
 

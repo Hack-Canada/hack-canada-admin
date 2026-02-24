@@ -8,13 +8,14 @@ import { getUserById } from "@/data/user";
 import { redirect } from "next/navigation";
 import React from "react";
 
-const UserPage = async ({
-  params,
-}: {
-  params: {
-    id: string;
-  };
-}) => {
+const UserPage = async (
+  props: {
+    params: Promise<{
+      id: string;
+    }>;
+  }
+) => {
+  const params = await props.params;
   const { id } = params;
   const currentUser = await getCurrentUser();
 

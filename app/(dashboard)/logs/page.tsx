@@ -11,7 +11,7 @@ import { isAdmin } from "@/lib/utils";
 import { redirect } from "next/navigation";
 
 interface LogsPageProps {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 const LogsPage = async (props: LogsPageProps) => {

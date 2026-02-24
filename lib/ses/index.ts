@@ -53,9 +53,9 @@ export const sendApplicationEmail = async (
 ) => {
   let emailTemplate;
   if (status === "accepted") {
-    emailTemplate = render(RejectionEmail({ name: recipientName }));
+    emailTemplate = await render(RejectionEmail({ name: recipientName }));
   } else {
-    emailTemplate = render(RejectionEmail({ name: recipientName }));
+    emailTemplate = await render(RejectionEmail({ name: recipientName }));
   }
 
   const emailSubject = "We've assessed your application - Hack Canada";
@@ -69,7 +69,7 @@ export const sendAcceptanceEmail = async (
   recipientName: string,
   recipientEmail: string,
 ) => {
-  const emailTemplate = render(AcceptanceEmail({ name: recipientName }));
+  const emailTemplate = await render(AcceptanceEmail({ name: recipientName }));
   const emailSubject =
     "[ACTION REQUIRED] Congratulations, you have been accepted to Hack Canada";
 
@@ -81,7 +81,7 @@ export const sendRejectionEmail = async (
   recipientName: string,
   recipientEmail: string,
 ) => {
-  const emailTemplate = render(RejectionEmail({ name: recipientName }));
+  const emailTemplate = await render(RejectionEmail({ name: recipientName }));
   const emailSubject = "Thank You for Your Application to Hack Canada";
 
   const result = await sendEmail(recipientEmail, emailSubject, emailTemplate);
@@ -89,7 +89,7 @@ export const sendRejectionEmail = async (
 };
 
 export const sendRSVPReminderEmail = async (name: string, email: string) => {
-  const emailTemplate = render(RSVPReminder({ name: name }));
+  const emailTemplate = await render(RSVPReminder({ name: name }));
 
   const emailSubject =
     "🚨 Urgent: Final RSVP Reminder - Please Respond by Tonight for Hack Canada";
@@ -98,7 +98,7 @@ export const sendRSVPReminderEmail = async (name: string, email: string) => {
 };
 
 export const sendReminderEmail = async (emails: string[]) => {
-  const emailTemplate = render(ReminderEmail());
+  const emailTemplate = await render(ReminderEmail());
 
   const params = {
     Source: `<${process.env.AWS_SES_EMAIL_SOURCE!}>`,
@@ -137,7 +137,7 @@ export const sendHackathonPrepEmail = async (
   recipientName: string,
   userId: string,
 ) => {
-  const emailTemplate = render(
+  const emailTemplate = await render(
     HackathonPrepEmail({
       name: recipientName,
       userId: userId,
@@ -154,7 +154,7 @@ export const sendOnboardingEmail = async (
 ) => {
   for (const hacker of hackers) {
     try {
-      const emailTemplate = render(
+      const emailTemplate = await render(
         OnboardingEmail({
           name: hacker.name || "Hacker",
           userId: hacker.userId,

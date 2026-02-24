@@ -13,7 +13,7 @@ import type { Schedule } from "@/lib/db/schema";
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ): Promise<NextResponse<ApiResponse<Schedule>>> {
   try {
     const user = await getCurrentUser();
@@ -25,7 +25,7 @@ export async function PATCH(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
     const existing = await getScheduleEventById(id);
 
     if (!existing) {
@@ -85,7 +85,7 @@ export async function PATCH(
 
 export async function DELETE(
   _req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ): Promise<NextResponse<ApiResponse>> {
   try {
     const user = await getCurrentUser();
@@ -97,7 +97,7 @@ export async function DELETE(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
     const existing = await getScheduleEventById(id);
 
     if (!existing) {

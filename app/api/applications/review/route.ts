@@ -7,9 +7,27 @@ import { db } from "@/lib/db";
 
 import { ApiResponse } from "@/types/api";
 import { isReviewer } from "@/lib/utils";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(req: Request): Promise<NextResponse<ApiResponse>> {
   try {
+    const ip = getClientIp(req);
+    const { success: withinLimit } = rateLimit(`review:${ip}`, {
+      windowMs: 60 * 1000,
+      maxRequests: 20,
+    });
+
+    if (!withinLimit) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Too many requests. Please slow down.",
+          error: "Rate limit exceeded",
+        },
+        { status: 429 },
+      );
+    }
+
     const currentUser = await getCurrentUser();
 
     if (!currentUser?.id || !isReviewer(currentUser.role)) {

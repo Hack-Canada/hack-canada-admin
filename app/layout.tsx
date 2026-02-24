@@ -9,6 +9,9 @@ import Providers from "../components/providers";
 export const metadata: Metadata = {
   title: "HC Admin",
   description: "Hack Canada Admin Dashboard",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({

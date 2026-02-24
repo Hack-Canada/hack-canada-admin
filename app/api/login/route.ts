@@ -7,10 +7,24 @@ import { getUserByEmail } from "@/lib/db/queries/user";
 import { LoginSchema } from "@/lib/validations/login";
 import { createAuditLog } from "@/lib/db/queries/audit-log";
 import { isReviewer } from "@/lib/utils";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(
   req: NextRequest,
 ): Promise<NextResponse<ApiResponse>> {
+  const ip = getClientIp(req);
+  const { success: withinLimit } = rateLimit(`login:${ip}`, {
+    windowMs: 60 * 1000,
+    maxRequests: 10,
+  });
+
+  if (!withinLimit) {
+    return NextResponse.json({
+      success: false,
+      message: "Too many login attempts. Please try again in a minute.",
+    });
+  }
+
   let existingUser;
   let email;
 

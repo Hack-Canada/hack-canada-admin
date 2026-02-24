@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Table,
@@ -12,6 +13,7 @@ import {
 import SortApplications from "./SortApplications";
 import ApplicationStatusModal from "@/components/ApplicationStatusModal";
 import { ApplicationStatusModalTrigger } from "@/components/search/ApplicationStatusModalTrigger";
+import BulkActions from "./BulkActions";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 
@@ -53,6 +55,7 @@ export default function AdminApplicationList({
 }: AdminApplicationListProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const currentSort = {
     field: (searchParams.get("sort") as SortField) ?? "reviewCount",
@@ -66,6 +69,22 @@ export default function AdminApplicationList({
     router.push(`?${params.toString()}`);
   };
 
+  const toggleSelect = (userId: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(userId)
+        ? prev.filter((id) => id !== userId)
+        : [...prev, userId],
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.length === applications.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(applications.map((a) => a.userId));
+    }
+  };
+
   if (!applications.length) return null;
 
   return (
@@ -76,10 +95,27 @@ export default function AdminApplicationList({
         </p>
         <SortApplications onSort={handleSort} currentSort={currentSort} />
       </div>
+
+      <BulkActions
+        selectedIds={selectedIds}
+        onClear={() => setSelectedIds([])}
+      />
+
       <div className="overflow-hidden rounded-xl border bg-card shadow-sm transition-all duration-200 hover:shadow-md">
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/50 transition-colors hover:bg-muted">
+              <TableHead className="w-[40px] py-4">
+                <input
+                  type="checkbox"
+                  checked={
+                    selectedIds.length === applications.length &&
+                    applications.length > 0
+                  }
+                  onChange={toggleSelectAll}
+                  className="size-4 cursor-pointer rounded border-border"
+                />
+              </TableHead>
               <TableHead className="py-4 font-semibold">Name</TableHead>
               <TableHead className="py-4 font-semibold">Email</TableHead>
               <TableHead className="py-4 font-semibold">Status</TableHead>
@@ -97,6 +133,14 @@ export default function AdminApplicationList({
                 key={application.id}
                 className="transition-colors hover:bg-muted/50"
               >
+                <TableCell className="py-4">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(application.userId)}
+                    onChange={() => toggleSelect(application.userId)}
+                    className="size-4 cursor-pointer rounded border-border"
+                  />
+                </TableCell>
                 <TableCell className="py-4 font-medium">
                   <Link
                     className="group relative flex w-fit items-center gap-1.5"

@@ -6,6 +6,7 @@ import {
   pgTable,
   text,
   timestamp,
+  unique,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable("user", {
@@ -283,3 +284,71 @@ export const checkIns = pgTable("checkIn", {
 
 export type CheckIn = typeof checkIns.$inferSelect;
 export type NewCheckIn = typeof checkIns.$inferInsert;
+
+export const challenges = pgTable("challenges", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text("name").notNull(),
+  category: text("category").notNull(),
+  points: integer("points").notNull(),
+  difficulty: text("difficulty").notNull().default("easy"), // easy, medium, hard
+  shortDescription: text("shortDescription").notNull().default(""),
+  instructions: text("instructions").notNull(),
+  hints: text("hints").array().notNull(),
+  qrCode: boolean("qrCode").notNull(),
+  submissionInstructions: text("submissionInstructions").notNull(),
+  maxCompletions: integer("maxCompletions"),
+  enabled: boolean("enabled").notNull().default(true),
+  deadlineStart: timestamp("deadlineStart"),
+  deadlineEnd: timestamp("deadlineEnd"),
+  showTime: timestamp("showTime"),
+});
+
+export type Challenge = typeof challenges.$inferSelect;
+
+export const challengesSubmitted = pgTable(
+  "challengesSubmitted",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    challengeId: text("challengeId")
+      .notNull()
+      .references(() => challenges.id, { onDelete: "cascade" }),
+    submittedAt: timestamp("submittedAt")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+  },
+  (t) => ({
+    uniq: unique().on(t.userId, t.challengeId),
+  }),
+);
+
+export type ChallengeSubmission = typeof challengesSubmitted.$inferSelect;
+export type NewChallengeSubmission = typeof challengesSubmitted.$inferInsert;
+
+export const schedule = pgTable("schedule", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  eventName: text("eventName").notNull(),
+  eventDescription: text("eventDescription"),
+  type: text("type").notNull(),
+  location: text("location"),
+  startTime: timestamp("startTime").notNull(),
+  endTime: timestamp("endTime").notNull(),
+  customTime: text("customTime"),
+  createdAt: timestamp("createdAt")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: timestamp("updatedAt")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+});
+
+export type Schedule = typeof schedule.$inferSelect;
+export type NewSchedule = typeof schedule.$inferInsert;

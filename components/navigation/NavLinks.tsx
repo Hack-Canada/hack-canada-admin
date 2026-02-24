@@ -15,6 +15,7 @@ import {
   CalendarCheck,
   ScanLine,
   Mail,
+  Calendar,
   Settings,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -33,6 +34,7 @@ const iconMap = {
   "RSVP Management": CalendarCheck,
   "Check-Ins": ScanLine,
   Emails: Mail,
+  Schedule: Calendar,
   Settings: Settings,
 };
 

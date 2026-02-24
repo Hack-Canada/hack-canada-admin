@@ -70,6 +70,11 @@ export const navLinks: NavigationLink[] = [
     adminOnly: true,
   },
   {
+    name: "Schedule",
+    href: "/schedule",
+    adminOnly: true,
+  },
+  {
     name: "Settings",
     href: "/settings",
     adminOnly: true,

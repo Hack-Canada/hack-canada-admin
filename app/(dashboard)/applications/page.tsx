@@ -13,10 +13,11 @@ import { getCurrentUser } from "@/auth";
 import { ApplicationSearch } from "@/components/search/ApplicationSearch";
 
 interface ApplicationsPageProps {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-const ApplicationsPage = async ({ searchParams }: ApplicationsPageProps) => {
+const ApplicationsPage = async (props: ApplicationsPageProps) => {
+  const searchParams = await props.searchParams;
   const user = await getCurrentUser();
 
   if (!user || user.role !== "admin") {

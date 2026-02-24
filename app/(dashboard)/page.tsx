@@ -9,11 +9,12 @@ import {
   users,
   checkIns,
 } from "@/lib/db/schema";
+import DashboardCharts from "@/components/DashboardCharts";
 import { isReviewer } from "@/lib/utils";
-import { count, eq, sql } from "drizzle-orm";
+import { count, eq, sql, gte, desc } from "drizzle-orm";
 import { redirect } from "next/navigation";
 
-export const revalidate = 1800;
+export const revalidate = 60;
 
 const Home = async () => {
   const user = await getCurrentUser();
@@ -36,6 +37,8 @@ const Home = async () => {
     [cancelled],
     [admins],
     [organizers],
+    [mentorsCount],
+    [volunteersCount],
     [totalReviews],
     [avgRating],
     [avgReviewCount],
@@ -76,7 +79,14 @@ const Home = async () => {
       .select({ count: count() })
       .from(users)
       .where(eq(users.role, "organizer")),
-    // New queries for review statistics
+    db
+      .select({ count: count() })
+      .from(users)
+      .where(eq(users.role, "mentor")),
+    db
+      .select({ count: count() })
+      .from(users)
+      .where(eq(users.role, "volunteer")),
     db.select({ count: count() }).from(applicationReviews),
     db
       .select({
@@ -98,8 +108,37 @@ const Home = async () => {
       .where(sql`${applicationReviews.reviewDuration} IS NOT NULL`),
   ]);
 
-  const volunteers = 0;
-  const mentors = 0;
+  const volunteers = volunteersCount.count;
+  const mentors = mentorsCount.count;
+
+  const statusData = [
+    { status: "pending", count: pendingApplications.count },
+    { status: "accepted", count: accepted.count },
+    { status: "rejected", count: rejected.count },
+    { status: "waitlisted", count: waitlisted.count },
+    { status: "cancelled", count: cancelled.count },
+  ];
+
+  const fourteenDaysAgo = new Date();
+  fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+
+  const reviewTrendRaw = await db
+    .select({
+      date: sql<string>`TO_CHAR(${applicationReviews.createdAt}, 'MM/DD')`,
+      count: count(),
+    })
+    .from(applicationReviews)
+    .where(gte(applicationReviews.createdAt, fourteenDaysAgo))
+    .groupBy(
+      sql`TO_CHAR(${applicationReviews.createdAt}, 'MM/DD')`,
+      sql`DATE(${applicationReviews.createdAt})`,
+    )
+    .orderBy(sql`DATE(${applicationReviews.createdAt})`);
+
+  const reviewTrend = reviewTrendRaw.map((r) => ({
+    date: r.date,
+    count: r.count,
+  }));
 
   return (
     <Container>
@@ -162,6 +201,16 @@ const Home = async () => {
               isDecimal
             />
           </div>
+        </section>
+
+        <section className="space-y-2">
+          <p className="text-lg font-bold text-foreground md:text-xl">
+            Charts
+          </p>
+          <DashboardCharts
+            statusData={statusData}
+            reviewTrend={reviewTrend}
+          />
         </section>
       </div>
     </Container>

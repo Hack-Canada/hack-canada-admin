@@ -40,7 +40,7 @@ export default function ReviewInterface({
           <Button
             key={value}
             onClick={() => setRating(value)}
-            variant={rating === value ? "default" : "rating"}
+            variant={rating === value ? "default" : "secondary"}
             className={cn(
               "h-12 text-lg font-semibold",
               value <= 3 && "hover:border-destructive hover:text-destructive",

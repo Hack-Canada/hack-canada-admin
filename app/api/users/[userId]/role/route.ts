@@ -6,10 +6,8 @@ import { ApiResponse } from "@/types/api";
 import { getCurrentUser } from "@/auth";
 import { createAuditLog } from "@/lib/db/queries/audit-log";
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { userId: string } },
-) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ userId: string }> }) {
+  const params = await props.params;
   let user;
   let role;
 

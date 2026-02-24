@@ -64,6 +64,19 @@ export const getAdminsAndOrganizers = async () => {
   }
 };
 
+export const getUsersByRoles = async (roles: string[]) => {
+  try {
+    return await db
+      .select()
+      .from(users)
+      .where(or(...roles.map((role) => eq(users.role, role))))
+      .orderBy(desc(users.createdAt));
+  } catch (error) {
+    console.log("Error fetching users by roles", error);
+    return [];
+  }
+};
+
 // getting total num of users
 export const getNumUsers = async () => {
   try {

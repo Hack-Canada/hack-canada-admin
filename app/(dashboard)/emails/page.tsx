@@ -3,7 +3,7 @@ import Container from "@/components/Container";
 import PageBanner from "@/components/PageBanner";
 import { isAdmin } from "@/lib/utils";
 import { redirect } from "next/navigation";
-import EmailTemplateList from "@/components/emails/EmailTemplateList";
+import EmailTemplateList from "@/components/Emails/EmailTemplateList";
 
 export default async function EmailsPage() {
   const user = await getCurrentUser();

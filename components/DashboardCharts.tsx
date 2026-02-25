@@ -7,7 +7,16 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bar, BarChart, XAxis, YAxis, Pie, PieChart, Cell } from "recharts";
+import {
+  Bar,
+  BarChart,
+  XAxis,
+  YAxis,
+  Pie,
+  PieChart,
+  Cell,
+  Legend,
+} from "recharts";
 
 const statusColors: Record<string, string> = {
   pending: "hsl(var(--chart-1))",
@@ -62,15 +71,35 @@ const DashboardCharts = ({ statusData, reviewTrend }: Props) => {
         <CardContent>
           <ChartContainer
             config={statusChartConfig}
-            className="mx-auto aspect-square max-h-[250px]"
+            className="mx-auto aspect-square max-h-[300px]"
           >
-            <PieChart>
+            <PieChart margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
               <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-              <Pie data={pieData} dataKey="count" nameKey="status" label>
+              <Pie
+                data={pieData}
+                dataKey="count"
+                nameKey="status"
+                outerRadius={80}
+                innerRadius={30}
+                paddingAngle={2}
+                label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+                labelLine={false}
+              >
                 {pieData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.fill} />
                 ))}
               </Pie>
+              <Legend
+                layout="horizontal"
+                verticalAlign="bottom"
+                align="center"
+                wrapperStyle={{ paddingTop: 20 }}
+                formatter={(value) => (
+                  <span className="text-xs capitalize text-foreground">
+                    {value}
+                  </span>
+                )}
+              />
             </PieChart>
           </ChartContainer>
         </CardContent>
@@ -82,15 +111,29 @@ const DashboardCharts = ({ statusData, reviewTrend }: Props) => {
             <CardTitle className="text-base">Reviews (Last 14 Days)</CardTitle>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={reviewChartConfig} className="h-[250px]">
-              <BarChart data={reviewTrend}>
+            <ChartContainer config={reviewChartConfig} className="h-[300px]">
+              <BarChart
+                data={reviewTrend}
+                margin={{ top: 10, right: 10, bottom: 20, left: 10 }}
+              >
                 <XAxis
                   dataKey="date"
                   tickLine={false}
                   axisLine={false}
-                  fontSize={12}
+                  fontSize={11}
+                  tickMargin={8}
+                  angle={-45}
+                  textAnchor="end"
+                  height={50}
                 />
-                <YAxis tickLine={false} axisLine={false} fontSize={12} />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  fontSize={12}
+                  width={40}
+                  tickMargin={4}
+                  allowDecimals={false}
+                />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Bar
                   dataKey="count"

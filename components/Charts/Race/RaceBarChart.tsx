@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/chart";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { Bar, BarChart, XAxis, YAxis, ResponsiveContainer } from "recharts";
+import { Bar, BarChart, XAxis, YAxis } from "recharts";
 
 const chartConfig = {
   count: {
@@ -38,11 +38,8 @@ const RaceBarChart = ({ data }: Props) => {
             <p className="mb-1 text-xl font-semibold text-foreground md:text-2xl">
               Race / Ethnicity
             </p>
-            <p className="text-xs md:text-sm">
-              July 12, 2024 -{" "}
-              {new Intl.DateTimeFormat("default", { dateStyle: "long" }).format(
-                new Date(),
-              )}
+            <p className="text-xs text-muted-foreground md:text-sm">
+              Distribution of applicants by race / ethnicity
             </p>
           </div>
 
@@ -70,34 +67,34 @@ const RaceBarChart = ({ data }: Props) => {
           </div>
         </div>
 
-        {/* List or Chart View */}
         {listView ? (
-          <div className="flex flex-col divide-y-2">
-            {sortedData.map(({ race, count }) => (
-              <div
-                key={race}
-                className="flex justify-between gap-x-2.5 py-2 max-sm:text-sm"
-              >
-                <p title={`Race: ${race}`}>{race}</p>
-                <p title={`Count: ${count}`}>{count}</p>
-              </div>
-            ))}
+          <div className="max-h-[400px] overflow-y-auto">
+            <div className="flex flex-col divide-y-2">
+              {sortedData.map(({ race, count }) => (
+                <div
+                  key={race}
+                  className="flex justify-between gap-x-2.5 py-2 max-sm:text-sm"
+                >
+                  <p title={`Race: ${race}`}>{race || "Not specified"}</p>
+                  <p className="shrink-0 font-medium" title={`Count: ${count}`}>{count}</p>
+                </div>
+              ))}
+            </div>
           </div>
         ) : (
-          <ChartContainer config={chartConfig}>
-            <ResponsiveContainer width="100%">
+          <div className="h-[350px] w-full overflow-hidden">
+            <ChartContainer config={chartConfig} className="!aspect-auto h-full w-full">
               <BarChart
                 data={sortedData}
                 layout="vertical"
-                margin={{
-                  left: 10,
-                }}
+                margin={{ top: 5, right: 30, bottom: 5, left: 10 }}
               >
                 <XAxis
                   type="number"
-                  dataKey="count"
-                  tick={{ fill: "var(--foreground)" }}
-                  axisLine={{ stroke: "var(--foreground)" }}
+                  tickLine={false}
+                  axisLine={false}
+                  fontSize={12}
+                  allowDecimals={false}
                 />
                 <YAxis
                   dataKey="race"
@@ -105,13 +102,14 @@ const RaceBarChart = ({ data }: Props) => {
                   tickLine={false}
                   tickMargin={10}
                   axisLine={false}
-                  tick={{ fill: "var(--foreground)" }}
+                  width={120}
+                  fontSize={11}
                   tickFormatter={(v) =>
-                    v.slice(0, 6) + (v.length > 6 ? "..." : "")
+                    v && v.length > 16 ? v.slice(0, 16) + "..." : v || "N/A"
                   }
                 />
                 <ChartTooltip
-                  cursor={{ fill: "rgba(255, 255, 255, 0.2)" }}
+                  cursor={{ fill: "hsl(var(--muted))" }}
                   content={
                     <ChartTooltipContent
                       nameKey="race"
@@ -122,13 +120,11 @@ const RaceBarChart = ({ data }: Props) => {
                 <Bar
                   dataKey="count"
                   fill={chartConfig.count.color}
-                  radius={5}
-                  animationBegin={0}
-                  animationDuration={1500}
+                  radius={[0, 4, 4, 0]}
                 />
               </BarChart>
-            </ResponsiveContainer>
-          </ChartContainer>
+            </ChartContainer>
+          </div>
         )}
       </div>
     </>

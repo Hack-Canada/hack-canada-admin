@@ -16,7 +16,7 @@ const ProgramData = async ({}: Props) => {
     .execute();
 
   return (
-    <div className="row-span-2 rounded-lg border p-6 md:col-span-2 md:p-10">
+    <div className="row-span-2 overflow-hidden rounded-lg border p-6 md:col-span-2 md:p-10">
       <ProgramBarChart data={results} />
     </div>
   );

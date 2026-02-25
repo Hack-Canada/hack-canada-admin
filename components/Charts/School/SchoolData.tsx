@@ -15,7 +15,7 @@ const SchoolData = async ({}: Props) => {
     .groupBy(hackerApplications.school);
 
   return (
-    <div className="row-span-2 rounded-lg border p-6 md:p-10">
+    <div className="row-span-2 overflow-hidden rounded-lg border p-6 md:p-10">
       <SchoolBarChart data={result} />
     </div>
   );

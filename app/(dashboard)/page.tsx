@@ -141,7 +141,9 @@ const Home = async () => {
         applicants: sql<number>`COUNT(${hackerApplications.userId})`,
       })
       .from(hackerApplications)
-      .where(isNotNull(hackerApplications.gender))
+      .where(
+        sql`${hackerApplications.gender} IS NOT NULL AND ${hackerApplications.submissionStatus} = 'submitted'`
+      )
       .groupBy(hackerApplications.gender)
       .orderBy(sql`COUNT(${hackerApplications.userId}) DESC`),
     db

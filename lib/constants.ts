@@ -59,24 +59,15 @@ export const navLinks: NavigationLink[] = [
     href: "/role-management",
     adminOnly: true,
   },
-  {
-    name: "Emails",
-    href: "/emails",
-    adminOnly: true,
-  },
-  {
-    name: "Logs",
-    href: "/logs",
-    adminOnly: true,
-  },
+
   {
     name: "Schedule",
     href: "/schedule",
     adminOnly: true,
   },
   {
-    name: "Settings",
-    href: "/settings",
+    name: "Logs",
+    href: "/logs",
     adminOnly: true,
   },
 ];

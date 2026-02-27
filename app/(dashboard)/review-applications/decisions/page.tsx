@@ -2,20 +2,28 @@ import { getCurrentUser } from "@/auth";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { isAdmin } from "@/lib/utils";
-import { hackerApplications, users } from "@/lib/db/schema";
-import { desc, eq } from "drizzle-orm";
+import {
+  hackerApplications,
+  users,
+} from "@/lib/db/schema";
+import { desc, eq, sql, count } from "drizzle-orm";
 import Container from "@/components/Container";
 import PageBanner from "@/components/PageBanner";
 import AdminApplicationList from "@/components/review/AdminApplicationList";
 import PaginationControls from "@/components/PaginationControls";
 import { RESULTS_PER_PAGE } from "@/lib/constants";
-import { count } from "drizzle-orm";
+import {
+  CONFIDENCE_WEIGHTS,
+  MAX_REVIEWS_FOR_CONFIDENCE,
+} from "@/lib/normalization/config";
 
 interface AdminApplicationsPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function AdminApplicationsPage(props: AdminApplicationsPageProps) {
+export default async function AdminApplicationsPage(
+  props: AdminApplicationsPageProps
+) {
   const searchParams = await props.searchParams;
   const user = await getCurrentUser();
 
@@ -30,15 +38,25 @@ export default async function AdminApplicationsPage(props: AdminApplicationsPage
     (searchParams["sort"] as
       | "reviewCount"
       | "averageRating"
+      | "normalizedAvgRating"
+      | "confidence"
       | "internalResult") ?? "reviewCount";
   const sortOrder = (searchParams["order"] as "asc" | "desc") ?? "desc";
 
   const params = new URLSearchParams();
   params.set("sort", sortField);
   params.set("order", sortOrder);
-  // We don't need to add page/perPage as they're handled by PaginationControls
 
-  const [totalApplications, applications] = await Promise.all([
+  // Get last normalized timestamp
+  const lastNormalizedResult = await db
+    .select({
+      lastNormalizedAt: sql<Date | null>`MAX(${hackerApplications.lastNormalizedAt})`,
+    })
+    .from(hackerApplications)
+    .execute();
+  const lastNormalizedAt = lastNormalizedResult[0]?.lastNormalizedAt || null;
+
+  const [totalApplications, applications, statusCounts] = await Promise.all([
     db
       .select({ count: count() })
       .from(hackerApplications)
@@ -52,8 +70,23 @@ export default async function AdminApplicationsPage(props: AdminApplicationsPage
         email: hackerApplications.email,
         reviewCount: hackerApplications.reviewCount,
         averageRating: hackerApplications.averageRating,
+        normalizedAvgRating: hackerApplications.normalizedAvgRating,
         internalResult: hackerApplications.internalResult,
         userId: hackerApplications.userId,
+        lastNormalizedAt: hackerApplications.lastNormalizedAt,
+        // Calculate confidence score via subquery
+        confidence: sql<number>`
+          COALESCE((
+            SELECT 
+              ROUND((
+                (LEAST(COUNT(*)::float / ${MAX_REVIEWS_FOR_CONFIDENCE}, 1.0) * ${CONFIDENCE_WEIGHTS.reviewCount}) +
+                (GREATEST(1.0 - (COALESCE(STDDEV(rating), 0)::float / 5.0), 0.0) * ${CONFIDENCE_WEIGHTS.agreement}) +
+                (0.7 * ${CONFIDENCE_WEIGHTS.reliability})
+              ) * 100)::integer
+            FROM "applicationReview" ar
+            WHERE ar."applicationId" = ${hackerApplications.id}
+          ), 0)
+        `,
       })
       .from(hackerApplications)
       .innerJoin(users, eq(users.id, hackerApplications.userId))
@@ -69,6 +102,24 @@ export default async function AdminApplicationsPage(props: AdminApplicationsPage
               return sortOrder === "asc"
                 ? hackerApplications.averageRating
                 : desc(hackerApplications.averageRating);
+            case "normalizedAvgRating":
+              return sortOrder === "asc"
+                ? hackerApplications.normalizedAvgRating
+                : desc(hackerApplications.normalizedAvgRating);
+            case "confidence": {
+              const confidenceExpr = sql`COALESCE((
+                SELECT ROUND((
+                  (LEAST(COUNT(*)::float / ${MAX_REVIEWS_FOR_CONFIDENCE}, 1.0) * ${CONFIDENCE_WEIGHTS.reviewCount}) +
+                  (GREATEST(1.0 - (COALESCE(STDDEV(rating), 0)::float / 5.0), 0.0) * ${CONFIDENCE_WEIGHTS.agreement}) +
+                  (0.7 * ${CONFIDENCE_WEIGHTS.reliability})
+                ) * 100)::integer
+                FROM "applicationReview" ar
+                WHERE ar."applicationId" = ${hackerApplications.id}
+              ), 0)`;
+              return sortOrder === "asc"
+                ? sql`${confidenceExpr} ASC`
+                : sql`${confidenceExpr} DESC`;
+            }
             case "internalResult":
               return sortOrder === "asc"
                 ? hackerApplications.internalResult
@@ -76,10 +127,34 @@ export default async function AdminApplicationsPage(props: AdminApplicationsPage
             default:
               return desc(hackerApplications.createdAt);
           }
-        })(),
+        })()
       )
       .limit(perPage)
       .offset(start),
+    // Fetch status counts for the summary bar
+    db
+      .select({
+        status: hackerApplications.internalResult,
+        count: count(),
+      })
+      .from(hackerApplications)
+      .where(eq(hackerApplications.submissionStatus, "submitted"))
+      .groupBy(hackerApplications.internalResult)
+      .then((results) => {
+        const counts = {
+          pending: 0,
+          accepted: 0,
+          rejected: 0,
+          waitlisted: 0,
+        };
+        for (const row of results) {
+          const status = row.status as keyof typeof counts;
+          if (status in counts) {
+            counts[status] = row.count;
+          }
+        }
+        return counts;
+      }),
   ]);
 
   return (
@@ -101,7 +176,11 @@ export default async function AdminApplicationsPage(props: AdminApplicationsPage
         <div className="space-y-6">
           {applications.length > 0 ? (
             <>
-              <AdminApplicationList applications={applications} />
+              <AdminApplicationList
+                applications={applications}
+                lastNormalizedAt={lastNormalizedAt}
+                statusCounts={statusCounts}
+              />
               <PaginationControls
                 totalNumOfUsers={totalApplications}
                 table="decisions"

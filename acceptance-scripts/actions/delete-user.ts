@@ -6,7 +6,7 @@ import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
-export const deleteUser = async (id: string, input: string) => {
+export const deleteUser = async (id: string) => {
   const user = await getCurrentUser();
 
   if (!user || user.role !== "admin") {
@@ -15,17 +15,11 @@ export const deleteUser = async (id: string, input: string) => {
     };
   }
 
-  const schema = z.string().trim().min(1).max(32);
+  const schema = z.string().uuid();
 
-  const validatedId = schema.safeParse(input);
+  const validatedId = schema.safeParse(id);
 
   if (!validatedId.success) {
-    return {
-      error: "Invalid ID Provided",
-    };
-  }
-
-  if (id !== validatedId.data) {
     return {
       error: "Invalid ID Provided",
     };

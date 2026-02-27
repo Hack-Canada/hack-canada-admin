@@ -26,15 +26,17 @@ const DeleteUserModal = ({ id, name, children }: Props) => {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
+  const CONFIRM_PHRASE = "i am sure i want to delete this";
+
   const handleDelete = () => {
-    if (input !== id) {
-      toast.error("Invalid ID Entered");
+    if (input !== CONFIRM_PHRASE) {
+      toast.error("Type the confirmation phrase exactly");
       return;
     }
 
     startTransition(async () => {
       try {
-        const res = await deleteUser(id, input);
+        const res = await deleteUser(id);
 
         if (res.error) {
           toast.error(res.error);
@@ -69,11 +71,12 @@ const DeleteUserModal = ({ id, name, children }: Props) => {
           className="space-y-4"
         >
           <Label className="pointer-events-none select-none">
-            Type to confirm: {id}
+            Type to confirm:{" "}
+            <span className="font-semibold italic">{CONFIRM_PHRASE}</span>
           </Label>
           <Input
             onChange={(e) => setInput(e.target.value)}
-            placeholder="ID"
+            placeholder={CONFIRM_PHRASE}
             disabled={isPending}
           />
           <Button className="w-full" variant="destructive">

@@ -106,20 +106,28 @@ export async function normalizeRatings(): Promise<NormalizationResult> {
     globalStdDev
   );
 
-  // Process each reviewer's ratings
-  for (const reviewer of processedStats) {
-    await db.execute(sql`
-      UPDATE "applicationReview"
+  // Batch update all reviewer ratings in a single statement using VALUES + join
+  if (processedStats.length > 0) {
+    const valuesList = processedStats
+      .map(
+        (r) =>
+          `('${r.reviewerId}', ${r.avgRating}::numeric, ${r.stdDev}::numeric, ${r.adjustment}::numeric)`
+      )
+      .join(", ");
+
+    await db.execute(sql.raw(`
+      UPDATE "applicationReview" ar
       SET adjusted_rating = ROUND(
         LEAST(10::numeric, GREATEST(0::numeric,
           CASE
-            WHEN ABS((rating::numeric - ${reviewer.avgRating}::numeric) / NULLIF(${reviewer.stdDev}::numeric, 0)) > ${ZSCORE_THRESHOLD}::numeric
-            THEN ${reviewer.avgRating}::numeric
-            ELSE rating::numeric + ${reviewer.adjustment}::numeric
+            WHEN ABS((ar.rating::numeric - rv.avg_rating) / NULLIF(rv.std_dev, 0)) > ${ZSCORE_THRESHOLD}::numeric
+            THEN rv.avg_rating
+            ELSE ar.rating::numeric + rv.adjustment
           END
         ))::numeric, 2)
-      WHERE "reviewerId" = ${reviewer.reviewerId}
-    `);
+      FROM (VALUES ${valuesList}) AS rv(reviewer_id, avg_rating, std_dev, adjustment)
+      WHERE ar."reviewerId" = rv.reviewer_id
+    `));
   }
 
   // Handle reviews without normalized ratings (reviewers below threshold)

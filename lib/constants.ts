@@ -4,6 +4,7 @@ type NavigationLink = {
   name: string;
   href: string;
   adminOnly?: boolean;
+  roles?: string[];
 };
 
 export const navLinks: NavigationLink[] = [
@@ -24,7 +25,7 @@ export const navLinks: NavigationLink[] = [
   {
     name: "Statistics",
     href: "/statistics",
-    adminOnly: false,
+    roles: ["admin", "organizer"],
   },
   {
     name: "Review Applications",

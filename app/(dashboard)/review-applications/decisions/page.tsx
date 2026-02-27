@@ -5,7 +5,6 @@ import { isAdmin } from "@/lib/utils";
 import {
   hackerApplications,
   users,
-  applicationReviews,
 } from "@/lib/db/schema";
 import { desc, eq, sql, count } from "drizzle-orm";
 import Container from "@/components/Container";

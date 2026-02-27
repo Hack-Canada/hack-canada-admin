@@ -26,7 +26,7 @@ export const revalidate = 120;
 const StatisticsPage = async () => {
   const user = await getCurrentUser();
 
-  if (!user || user.role !== "admin") {
+  if (!user || (user.role !== "admin" && user.role !== "organizer")) {
     redirect("https://app.hackcanada.org");
   }
 

@@ -23,6 +23,7 @@ const roles = [
   { value: "sponsor", label: "Sponsor" },
   { value: "volunteer", label: "Volunteer" },
   { value: "admin", label: "Admin" },
+  { value: "organizer", label: "Organizer" },
 ] as const;
 
 interface RoleSelectProps {

@@ -9,7 +9,8 @@ const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>
 >(({ className, ...props }, ref) => {
-  const thumbCount = Array.isArray(props.value) ? props.value.length : 1;
+  const values = props.value ?? props.defaultValue;
+  const thumbCount = Array.isArray(values) ? values.length : 1;
   
   return (
     <SliderPrimitive.Root

@@ -47,12 +47,16 @@ const NavLinks = ({ isMinimized, onNavigate }: NavLinksProps) => {
   const pathname = usePathname();
   const { data: session } = useSession();
 
-  const isAdmin = session?.user?.role === "admin";
+  const userRole = session?.user?.role;
+  const isAdmin = userRole === "admin";
 
   return (
     <ul className="w-full space-y-2 pb-8">
       {navLinks
-        .filter((link) => !link.adminOnly || isAdmin)
+        .filter((link) => {
+          if (link.roles) return userRole ? link.roles.includes(userRole) : false;
+          return !link.adminOnly || isAdmin;
+        })
         .map((link) => {
           const Icon = iconMap[link.name as keyof typeof iconMap];
 

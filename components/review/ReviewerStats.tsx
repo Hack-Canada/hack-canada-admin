@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Suspense } from "react";
 import ReviewerStatsCards from "./ReviewerStatsCards";
+import ReviewerTimingBreakdown from "./ReviewerTimingBreakdown";
 import ReviewerHistoryTable from "./ReviewerHistoryTable";
 import { ClipboardX } from "lucide-react";
 
@@ -55,6 +56,7 @@ export default function ReviewerStats({
           timeSpent={stats.timeSpent}
           averageRating={stats.averageRating}
         />
+        <ReviewerTimingBreakdown reviews={stats.applicationsReviewed} />
         <ReviewerHistoryTable reviews={stats.applicationsReviewed} />
       </div>
     </Suspense>

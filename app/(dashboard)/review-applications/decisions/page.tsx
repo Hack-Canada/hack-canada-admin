@@ -57,7 +57,7 @@ export default async function AdminApplicationsPage(
     .execute();
   const lastNormalizedAt = lastNormalizedResult[0]?.lastNormalizedAt || null;
 
-  const [totalApplications, applications] = await Promise.all([
+  const [totalApplications, applications, statusCounts] = await Promise.all([
     db
       .select({ count: count() })
       .from(hackerApplications)
@@ -132,6 +132,30 @@ export default async function AdminApplicationsPage(
       )
       .limit(perPage)
       .offset(start),
+    // Fetch status counts for the summary bar
+    db
+      .select({
+        status: hackerApplications.internalResult,
+        count: count(),
+      })
+      .from(hackerApplications)
+      .where(eq(hackerApplications.submissionStatus, "submitted"))
+      .groupBy(hackerApplications.internalResult)
+      .then((results) => {
+        const counts = {
+          pending: 0,
+          accepted: 0,
+          rejected: 0,
+          waitlisted: 0,
+        };
+        for (const row of results) {
+          const status = row.status as keyof typeof counts;
+          if (status in counts) {
+            counts[status] = row.count;
+          }
+        }
+        return counts;
+      }),
   ]);
 
   return (
@@ -156,6 +180,7 @@ export default async function AdminApplicationsPage(
               <AdminApplicationList
                 applications={applications}
                 lastNormalizedAt={lastNormalizedAt}
+                statusCounts={statusCounts}
               />
               <PaginationControls
                 totalNumOfUsers={totalApplications}

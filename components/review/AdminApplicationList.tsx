@@ -15,8 +15,9 @@ import SortApplications from "./SortApplications";
 import ApplicationStatusModal from "@/components/ApplicationStatusModal";
 import { ApplicationStatusModalTrigger } from "@/components/search/ApplicationStatusModalTrigger";
 import BulkActions from "./BulkActions";
+import CriteriaBulkAction from "./CriteriaBulkAction";
 import Link from "next/link";
-import { ExternalLink, RefreshCw, AlertCircle, CheckCircle2 } from "lucide-react";
+import { ExternalLink, RefreshCw, AlertCircle, CheckCircle2, Clock, UserCheck, UserX, Users } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -34,9 +35,17 @@ interface Application {
   lastNormalizedAt: Date | null;
 }
 
+interface StatusCounts {
+  pending: number;
+  accepted: number;
+  rejected: number;
+  waitlisted: number;
+}
+
 interface AdminApplicationListProps {
   applications: Application[];
   lastNormalizedAt: Date | null;
+  statusCounts: StatusCounts;
 }
 
 const getReviewCountColor = (count: number | null) => {
@@ -71,6 +80,7 @@ type SortOrder = "asc" | "desc";
 export default function AdminApplicationList({
   applications,
   lastNormalizedAt,
+  statusCounts,
 }: AdminApplicationListProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -139,6 +149,39 @@ export default function AdminApplicationList({
 
   return (
     <div className="space-y-4">
+      {/* Status Summary Bar */}
+      <div className="flex flex-wrap items-center justify-center gap-2 rounded-lg border bg-card p-3 text-sm md:gap-4">
+        <div className="flex items-center gap-1.5">
+          <Clock className="size-4 text-muted-foreground" />
+          <span className="font-medium">Pending:</span>
+          <span className="text-muted-foreground">{statusCounts.pending}</span>
+        </div>
+        <span className="text-muted-foreground/50">|</span>
+        <div className="flex items-center gap-1.5">
+          <UserCheck className="size-4 text-green-500" />
+          <span className="font-medium text-green-600 dark:text-green-400">Accepted:</span>
+          <span className="text-muted-foreground">{statusCounts.accepted}</span>
+        </div>
+        <span className="text-muted-foreground/50">|</span>
+        <div className="flex items-center gap-1.5">
+          <UserX className="size-4 text-red-500" />
+          <span className="font-medium text-red-600 dark:text-red-400">Rejected:</span>
+          <span className="text-muted-foreground">{statusCounts.rejected}</span>
+        </div>
+        <span className="text-muted-foreground/50">|</span>
+        <div className="flex items-center gap-1.5">
+          <Users className="size-4 text-yellow-500" />
+          <span className="font-medium text-yellow-600 dark:text-yellow-400">Waitlisted:</span>
+          <span className="text-muted-foreground">{statusCounts.waitlisted}</span>
+        </div>
+      </div>
+
+      {/* Criteria-Based Bulk Action Panel */}
+      <CriteriaBulkAction
+        statusCounts={statusCounts}
+        onSuccess={() => router.refresh()}
+      />
+
       {/* Normalization Controls */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card p-4">
         <div className="flex items-center gap-3">

@@ -4,6 +4,7 @@ import LevelOfStudyData from "@/components/Charts/LevelOfStudy/LevelOfStudyData"
 import ProgramData from "@/components/Charts/Program/ProgramData";
 import RaceData from "@/components/Charts/Race/RaceData";
 import ReviewPipelineStats from "@/components/Charts/ReviewPipeline/ReviewPipelineStats";
+import ReviewerAnalytics from "@/components/Charts/ReviewerAnalytics";
 import SchoolData from "@/components/Charts/School/SchoolData";
 import TShirtData from "@/components/Charts/TShirt/TShirtData";
 import Container from "@/components/Container";
@@ -18,13 +19,14 @@ import {
 import { count, eq, sql, isNotNull } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { getReviewerAnalytics } from "@/lib/normalization/normalize";
 
 export const revalidate = 120;
 
 const StatisticsPage = async () => {
   const user = await getCurrentUser();
 
-  if (!user || user.role !== "admin") {
+  if (!user || (user.role !== "admin" && user.role !== "organizer")) {
     redirect("https://app.hackcanada.org");
   }
 
@@ -45,6 +47,7 @@ const StatisticsPage = async () => {
     ratingHistogramData,
     [reviewSpeedData],
     reviewerAgreementData,
+    reviewerAnalytics,
   ] = await Promise.all([
     db.select({ count: count() }).from(hackerApplications),
     db
@@ -159,6 +162,8 @@ const StatisticsPage = async () => {
       .from(applicationReviews)
       .groupBy(applicationReviews.applicationId)
       .having(sql`COUNT(*) >= 2`),
+    // Reviewer analytics (bias, reliability, etc.)
+    getReviewerAnalytics(),
   ]);
 
   const applicationData = [
@@ -382,6 +387,22 @@ const StatisticsPage = async () => {
             ratingHistogram={ratingHistogramData}
             reviewSpeed={reviewSpeedData}
             reviewerAgreement={reviewerAgreementData}
+          />
+        </section>
+
+        {/* Reviewer Analytics */}
+        <section>
+          <p className="mb-3 text-lg font-bold text-foreground md:text-xl">
+            Reviewer Analytics
+          </p>
+          <ReviewerAnalytics
+            reviewers={reviewerAnalytics.reviewers}
+            globalAvg={reviewerAnalytics.globalAvg}
+            globalStdDev={reviewerAnalytics.globalStdDev}
+            harshestReviewer={reviewerAnalytics.harshestReviewer}
+            mostLenientReviewer={reviewerAnalytics.mostLenientReviewer}
+            avgBias={reviewerAnalytics.avgBias}
+            agreementRate={reviewerAnalytics.agreementRate}
           />
         </section>
 

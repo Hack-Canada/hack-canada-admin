@@ -3,6 +3,7 @@ import HackerPieChart from "@/components/Charts/HackerPieChart";
 import LevelOfStudyData from "@/components/Charts/LevelOfStudy/LevelOfStudyData";
 import ProgramData from "@/components/Charts/Program/ProgramData";
 import RaceData from "@/components/Charts/Race/RaceData";
+import ReviewPipelineStats from "@/components/Charts/ReviewPipeline/ReviewPipelineStats";
 import SchoolData from "@/components/Charts/School/SchoolData";
 import TShirtData from "@/components/Charts/TShirt/TShirtData";
 import Container from "@/components/Container";
@@ -40,6 +41,10 @@ const StatisticsPage = async () => {
     levelVsAcceptance,
     reviewCoverage,
     rsvpRate,
+    reviewProgressData,
+    ratingHistogramData,
+    [reviewSpeedData],
+    reviewerAgreementData,
   ] = await Promise.all([
     db.select({ count: count() }).from(hackerApplications),
     db
@@ -115,6 +120,45 @@ const StatisticsPage = async () => {
       })
       .from(users)
       .where(eq(users.applicationStatus, "accepted")),
+    // Review progress distribution (how many apps have 0, 1, 2, ... 5 reviews)
+    db
+      .select({
+        reviewCount: hackerApplications.reviewCount,
+        count: sql<number>`COUNT(*)`,
+      })
+      .from(hackerApplications)
+      .where(eq(hackerApplications.submissionStatus, "submitted"))
+      .groupBy(hackerApplications.reviewCount)
+      .orderBy(hackerApplications.reviewCount),
+    // Rating histogram (distribution of individual review ratings 0-10)
+    db
+      .select({
+        rating: applicationReviews.rating,
+        count: sql<number>`COUNT(*)`,
+      })
+      .from(applicationReviews)
+      .groupBy(applicationReviews.rating)
+      .orderBy(applicationReviews.rating),
+    // Review speed stats
+    db
+      .select({
+        median: sql<number>`PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY ${applicationReviews.reviewDuration})`,
+        average: sql<number>`ROUND(AVG(${applicationReviews.reviewDuration})::numeric, 1)`,
+        min: sql<number>`MIN(${applicationReviews.reviewDuration})`,
+        max: sql<number>`MAX(${applicationReviews.reviewDuration})`,
+        total: sql<number>`COUNT(*)`,
+        speedClickers: sql<number>`COUNT(CASE WHEN ${applicationReviews.reviewDuration} < 10 THEN 1 END)`,
+      })
+      .from(applicationReviews)
+      .where(isNotNull(applicationReviews.reviewDuration)),
+    // Reviewer agreement (rating spread per application for apps with 2+ reviews)
+    db
+      .select({
+        spread: sql<number>`MAX(${applicationReviews.rating}) - MIN(${applicationReviews.rating})`,
+      })
+      .from(applicationReviews)
+      .groupBy(applicationReviews.applicationId)
+      .having(sql`COUNT(*) >= 2`),
   ]);
 
   const applicationData = [
@@ -326,6 +370,19 @@ const StatisticsPage = async () => {
               </div>
             </div>
           </div>
+        </section>
+
+        {/* Review Pipeline */}
+        <section>
+          <p className="mb-3 text-lg font-bold text-foreground md:text-xl">
+            Review Pipeline
+          </p>
+          <ReviewPipelineStats
+            reviewProgress={reviewProgressData}
+            ratingHistogram={ratingHistogramData}
+            reviewSpeed={reviewSpeedData}
+            reviewerAgreement={reviewerAgreementData}
+          />
         </section>
 
         {/* Charts Grid */}

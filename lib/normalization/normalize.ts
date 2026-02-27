@@ -197,7 +197,7 @@ export async function getReviewerAnalytics(): Promise<{
     ORDER BY COUNT(ar.id) DESC
   `);
 
-  const rows = (reviewerData as { rows: Array<{
+  const rows = ((reviewerData as unknown) as { rows: Array<{
     reviewerId: string;
     reviewerName: string;
     reviewCount: number;
@@ -266,7 +266,7 @@ export async function getReviewerAnalytics(): Promise<{
   `);
 
   const agreementRate =
-    ((agreementData as { rows: Array<{ agreement_rate: number }> }).rows[0]
+    (((agreementData as unknown) as { rows: Array<{ agreement_rate: number }> }).rows[0]
       ?.agreement_rate as number) || 0;
 
   return {

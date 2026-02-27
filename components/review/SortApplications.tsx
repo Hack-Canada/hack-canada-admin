@@ -10,7 +10,12 @@ import {
 } from "@/components/ui/select";
 import { ArrowDown, ArrowUp } from "lucide-react";
 
-type SortField = "reviewCount" | "averageRating" | "internalResult";
+type SortField =
+  | "reviewCount"
+  | "averageRating"
+  | "normalizedAvgRating"
+  | "confidence"
+  | "internalResult";
 type SortOrder = "asc" | "desc";
 
 interface SortApplicationsProps {
@@ -44,7 +49,9 @@ export default function SortApplications({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="reviewCount">Review Count</SelectItem>
-          <SelectItem value="averageRating">Average Rating</SelectItem>
+          <SelectItem value="averageRating">Raw Avg Rating</SelectItem>
+          <SelectItem value="normalizedAvgRating">Normalized Rating</SelectItem>
+          <SelectItem value="confidence">Confidence</SelectItem>
           <SelectItem value="internalResult">Status</SelectItem>
         </SelectContent>
       </Select>

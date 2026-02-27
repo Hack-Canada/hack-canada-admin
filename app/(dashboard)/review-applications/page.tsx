@@ -20,7 +20,7 @@ interface SystemStatus {
 }
 
 const MIN_REVIEW_LIMIT = 50;
-const MAX_REVIEW_LIMIT = Math.ceil(MIN_REVIEW_LIMIT * 2.5);
+const MAX_REVIEW_LIMIT = Math.ceil(MIN_REVIEW_LIMIT * 3.5);
 
 export default async function ReviewApplicationsPage() {
   const user = await getCurrentUser();

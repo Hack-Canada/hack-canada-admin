@@ -1,5 +1,5 @@
 import { getCurrentUser } from "@/auth";
-import { getLogs, getDistinctEntityTypes } from "@/data/logs-page";
+import { getLogs, getDistinctEntityTypes, getLogFlags } from "@/data/logs-page";
 import Container from "@/components/Container";
 import PageBanner from "@/components/PageBanner";
 import PaginationControls from "@/components/PaginationControls";
@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { LogsStats } from "@/components/logs/LogsStats";
 import { LogList } from "@/components/logs/LogList";
 import LogFilters from "@/components/logs/LogFilters";
+import { LogsFlags } from "@/components/logs/LogsFlags";
 import { isAdmin } from "@/lib/utils";
 import { redirect } from "next/navigation";
 
@@ -32,7 +33,10 @@ const LogsPage = async (props: LogsPageProps) => {
     toDate: searchParams["toDate"] as string,
   });
 
-  const entityTypes = await getDistinctEntityTypes();
+  const [entityTypes, flags] = await Promise.all([
+    getDistinctEntityTypes(),
+    getLogFlags(),
+  ]);
 
   const uniqueUserIds = Array.from(new Set(logs.map((log) => log.userId)));
   const users =
@@ -61,6 +65,8 @@ const LogsPage = async (props: LogsPageProps) => {
         subheading="A detailed record of all system actions and changes."
         className="transition-all duration-200 hover:bg-muted/50"
       />
+
+      <LogsFlags flags={flags} />
 
       <section aria-label="Audit Logs List" className="space-y-6 md:space-y-10">
         <LogsStats

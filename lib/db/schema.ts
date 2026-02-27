@@ -17,6 +17,7 @@ export const users = pgTable("user", {
   email: text("email").notNull(),
   emailVerified: timestamp("emailVerified"),
   password: text("password"),
+  image: text("image"),
   role: text("role").default("unassigned").notNull(),
   applicationStatus: text("applicationStatus").notNull().default("not_applied"),
   acceptedAt: timestamp("acceptedAt"),
@@ -190,6 +191,8 @@ export const hackerApplications = pgTable("hackerApplication", {
   internalNotes: text("internalNotes"),
   reviewCount: integer("reviewCount").default(0).notNull(),
   averageRating: integer("averageRating"),
+  normalizedAvgRating: integer("normalizedAvgRating"),
+  lastNormalizedAt: timestamp("lastNormalizedAt"),
 });
 
 export const applicationReviews = pgTable("applicationReview", {

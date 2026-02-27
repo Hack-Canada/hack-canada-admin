@@ -9,11 +9,15 @@ const { combinedEnv } = loadEnvConfig(process.cwd(), dev, {
 });
 Object.assign(process.env, combinedEnv);
 
-// Constants
-export const TARGET_AVG = 5.4; // Target average rating
-export const MIN_REVIEWS_THRESHOLD = 3; // Minimum reviews needed for reviewer stats
-export const MIN_REVIEW_VALUE_THRESHOLD = 4.0; // Minimum average review value needed to be considered
-export const ZSCORE_THRESHOLD = 2.0; // Z-score threshold for detecting outliers
+// Re-export constants from shared normalization config
+export {
+  TARGET_AVG,
+  MIN_REVIEWS_THRESHOLD,
+  MIN_REVIEW_VALUE_THRESHOLD,
+  ZSCORE_THRESHOLD,
+} from "@/lib/normalization/config";
+
+// CLI-specific constants
 export const PROGRESS_FILE = path.join(
   process.cwd(),
   "acceptance-progress.json",

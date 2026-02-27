@@ -7,6 +7,8 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Bar, BarChart, XAxis, YAxis } from "recharts";
+import Link from "next/link";
+import { ExternalLink } from "lucide-react";
 
 const PROGRESS_COLORS = [
   "hsl(var(--chart-1))",
@@ -113,9 +115,10 @@ export default function ReviewPipelineStats({
             </div>
             <div className="space-y-1.5">
               {progressWithPct.map((r) => (
-                <div
+                <Link
                   key={r.reviewCount}
-                  className="flex items-center justify-between text-xs"
+                  href={`/statistics/review-drill?view=progress&filter=${r.reviewCount}`}
+                  className="flex items-center justify-between rounded-md px-1.5 py-1 text-xs transition-colors hover:bg-muted"
                 >
                   <span className="flex items-center gap-2">
                     <span
@@ -127,10 +130,11 @@ export default function ReviewPipelineStats({
                     />
                     {r.reviewCount} review{r.reviewCount !== 1 ? "s" : ""}
                   </span>
-                  <span className="tabular-nums text-muted-foreground">
+                  <span className="flex items-center gap-1.5 tabular-nums text-muted-foreground">
                     {r.count} ({r.percentage.toFixed(1)}%)
+                    <ExternalLink className="h-3 w-3 opacity-50" />
                   </span>
-                </div>
+                </Link>
               ))}
             </div>
           </>
@@ -216,7 +220,10 @@ export default function ReviewPipelineStats({
                 </p>
               </div>
             </div>
-            <div className="rounded-md bg-muted/50 p-2.5">
+            <Link
+              href="/statistics/review-drill?view=speed&filter=under10"
+              className="flex items-center justify-between rounded-md bg-muted/50 p-2.5 transition-colors hover:bg-muted"
+            >
               <p className="text-xs">
                 <span className="font-medium">{speedClickerPct}%</span>{" "}
                 <span className="text-muted-foreground">
@@ -224,7 +231,15 @@ export default function ReviewPipelineStats({
                   / {reviewSpeed.total})
                 </span>
               </p>
-            </div>
+              <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+            </Link>
+            <Link
+              href="/statistics/review-drill?view=speed&filter=all"
+              className="flex items-center justify-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+              View all reviews by duration
+              <ExternalLink className="h-3 w-3" />
+            </Link>
           </div>
         ) : (
           <p className="text-sm text-muted-foreground">No review data</p>
@@ -242,36 +257,48 @@ export default function ReviewPipelineStats({
               Rating spread on apps with 2+ reviews
             </p>
             <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
+              <Link
+                href="/statistics/review-drill?view=agreement&filter=high"
+                className="flex items-center justify-between rounded-md px-1.5 py-1 text-sm transition-colors hover:bg-muted"
+              >
                 <span className="flex items-center gap-2">
                   <span className="inline-block h-2.5 w-2.5 rounded-sm bg-green-500" />
                   High agreement (spread ≤2)
                 </span>
-                <span className="tabular-nums text-muted-foreground">
+                <span className="flex items-center gap-1.5 tabular-nums text-muted-foreground">
                   {highAgreement} (
                   {((highAgreement / totalWithMultiple) * 100).toFixed(1)}%)
+                  <ExternalLink className="h-3 w-3 opacity-50" />
                 </span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
+              </Link>
+              <Link
+                href="/statistics/review-drill?view=agreement&filter=moderate"
+                className="flex items-center justify-between rounded-md px-1.5 py-1 text-sm transition-colors hover:bg-muted"
+              >
                 <span className="flex items-center gap-2">
                   <span className="inline-block h-2.5 w-2.5 rounded-sm bg-yellow-500" />
                   Moderate (spread 3-4)
                 </span>
-                <span className="tabular-nums text-muted-foreground">
+                <span className="flex items-center gap-1.5 tabular-nums text-muted-foreground">
                   {moderate} (
                   {((moderate / totalWithMultiple) * 100).toFixed(1)}%)
+                  <ExternalLink className="h-3 w-3 opacity-50" />
                 </span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
+              </Link>
+              <Link
+                href="/statistics/review-drill?view=agreement&filter=controversial"
+                className="flex items-center justify-between rounded-md px-1.5 py-1 text-sm transition-colors hover:bg-muted"
+              >
                 <span className="flex items-center gap-2">
                   <span className="inline-block h-2.5 w-2.5 rounded-sm bg-red-500" />
                   Controversial (spread 5+)
                 </span>
-                <span className="tabular-nums text-muted-foreground">
+                <span className="flex items-center gap-1.5 tabular-nums text-muted-foreground">
                   {controversial} (
                   {((controversial / totalWithMultiple) * 100).toFixed(1)}%)
+                  <ExternalLink className="h-3 w-3 opacity-50" />
                 </span>
-              </div>
+              </Link>
             </div>
             <div className="flex h-3 overflow-hidden rounded-full">
               {highAgreement > 0 && (

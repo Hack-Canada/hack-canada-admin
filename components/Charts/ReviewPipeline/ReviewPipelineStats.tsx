@@ -67,11 +67,11 @@ export default function ReviewPipelineStats({
   reviewSpeed,
   reviewerAgreement,
 }: ReviewPipelineStatsProps) {
-  const totalApps = reviewProgress.reduce((sum, r) => sum + r.count, 0);
+  const totalApps = reviewProgress.reduce((sum, r) => sum + Number(r.count), 0);
 
   const progressWithPct = reviewProgress.map((r) => ({
     ...r,
-    percentage: totalApps > 0 ? (r.count / totalApps) * 100 : 0,
+    percentage: totalApps > 0 ? (Number(r.count) / totalApps) * 100 : 0,
   }));
 
   const fullRatingHistogram = Array.from({ length: 11 }, (_, i) => {

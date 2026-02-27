@@ -381,7 +381,10 @@ export default function CriteriaBulkAction({
           actionLabel={getActionLabel(targetAction)}
           currentCounts={previewData.currentCounts}
           projectedCounts={previewData.projectedCounts}
-          onSuccess={onSuccess}
+          onSuccess={() => {
+            setPreviewData(null);
+            onSuccess?.();
+          }}
         />
       )}
     </>

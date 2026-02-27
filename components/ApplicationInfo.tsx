@@ -75,13 +75,14 @@ const ApplicationInfo = ({ hacker, hideBackgroundInfo }: Props) => {
             />
           )}
           <InfoRow
-            label="First Name"
-            value={hacker.firstName || <EmptyValue />}
-            icon={<UserIcon className="size-4" />}
-          />
-          <InfoRow
-            label="Last Name"
-            value={hacker.lastName || <EmptyValue />}
+            label="Name"
+            value={
+              hacker.firstName || hacker.lastName ? (
+                `${hacker.firstName || ""} ${hacker.lastName || ""}`.trim()
+              ) : (
+                <EmptyValue />
+              )
+            }
             icon={<UserIcon className="size-4" />}
           />
           <InfoRow

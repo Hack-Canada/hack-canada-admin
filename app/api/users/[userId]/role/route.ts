@@ -16,6 +16,23 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ userId:
     const body = await req.json();
     role = body.role;
 
+    // Verify the actor's session references a real DB record.
+    // Stale sessions (e.g. after self-deletion) would otherwise cause FK
+    // violations on every audit log write.
+    if (user?.id) {
+      const actorInDb = await db.query.users.findFirst({
+        where: eq(users.id, user.id),
+        columns: { id: true },
+      });
+      if (!actorInDb) {
+        return Response.json({
+          success: false,
+          message: "Session is no longer valid. Please sign in again.",
+          error: "Actor not found in database",
+        } as ApiResponse, { status: 401 });
+      }
+    }
+
     // Get the target user's current role
     const targetUser = await db.query.users.findFirst({
       where: eq(users.id, params.userId),
@@ -36,17 +53,21 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ userId:
       user.id === params.userId
     ) {
       // Log unauthorized attempt
-      await createAuditLog({
-        userId: user?.id || "unknown",
-        action: "update",
-        entityType: "user",
-        entityId: params.userId,
-        metadata: {
-          reason: "Unauthorized role update attempt",
-          attempted_role: role,
-          requestedBy: user?.id || "unknown",
-        },
-      });
+      try {
+        await createAuditLog({
+          userId: user?.id || "unknown",
+          action: "update",
+          entityType: "user",
+          entityId: params.userId,
+          metadata: {
+            reason: "Unauthorized role update attempt",
+            attempted_role: role,
+            requestedBy: user?.id || "unknown",
+          },
+        });
+      } catch (auditErr) {
+        console.error("[AUDIT_LOG_ERROR]", auditErr);
+      }
 
       return Response.json({
         success: false,
@@ -75,17 +96,21 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ userId:
 
     if (!validRoles.includes(role as UserRole)) {
       // Log invalid role attempt
-      await createAuditLog({
-        userId: user.id,
-        action: "update",
-        entityType: "user",
-        entityId: params.userId,
-        metadata: {
-          reason: "Invalid role update attempt",
-          attempted_role: role,
-          valid_roles: validRoles,
-        },
-      });
+      try {
+        await createAuditLog({
+          userId: user.id,
+          action: "update",
+          entityType: "user",
+          entityId: params.userId,
+          metadata: {
+            reason: "Invalid role update attempt",
+            attempted_role: role,
+            valid_roles: validRoles,
+          },
+        });
+      } catch (auditErr) {
+        console.error("[AUDIT_LOG_ERROR]", auditErr);
+      }
 
       return Response.json({
         success: false,
@@ -95,18 +120,22 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ userId:
     }
 
     // Create audit log before updating
-    await createAuditLog({
-      userId: user.id,
-      action: "update",
-      entityType: "user",
-      entityId: params.userId,
-      previousValue: { role: targetUser.role },
-      newValue: { role: role as UserRole },
-      metadata: {
-        reason: "User role update",
-        updatedBy: user.id,
-      },
-    });
+    try {
+      await createAuditLog({
+        userId: user.id,
+        action: "update",
+        entityType: "user",
+        entityId: params.userId,
+        previousValue: { role: targetUser.role },
+        newValue: { role: role as UserRole },
+        metadata: {
+          reason: "User role update",
+          updatedBy: user.id,
+        },
+      });
+    } catch (auditErr) {
+      console.error("[AUDIT_LOG_ERROR]", auditErr);
+    }
 
     await db
       .update(users)
@@ -121,17 +150,21 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ userId:
     console.error("[UPDATE_USER_ROLE_ERROR]", error);
 
     // Log error
-    await createAuditLog({
-      userId: user?.id || "unknown",
-      action: "update",
-      entityType: "user",
-      entityId: params.userId,
-      metadata: {
-        reason: "Failed role update",
-        error: error instanceof Error ? error.message : "Unknown error",
-        attempted_role: role || "unknown",
-      },
-    });
+    try {
+      await createAuditLog({
+        userId: user?.id || "unknown",
+        action: "update",
+        entityType: "user",
+        entityId: params.userId,
+        metadata: {
+          reason: "Failed role update",
+          error: error instanceof Error ? error.message : "Unknown error",
+          attempted_role: role || "unknown",
+        },
+      });
+    } catch (auditErr) {
+      console.error("[AUDIT_LOG_ERROR]", auditErr);
+    }
 
     return Response.json({
       success: false,

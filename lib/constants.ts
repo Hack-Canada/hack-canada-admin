@@ -24,7 +24,7 @@ export const navLinks: NavigationLink[] = [
   {
     name: "Statistics",
     href: "/statistics",
-    adminOnly: true,
+    adminOnly: false,
   },
   {
     name: "Review Applications",

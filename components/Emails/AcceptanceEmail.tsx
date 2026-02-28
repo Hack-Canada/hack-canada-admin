@@ -1,198 +1,404 @@
 import {
   Body,
+  Button,
   Container,
   Head,
+  Heading,
+  Hr,
   Html,
+  Img,
+  Link,
   Preview,
   Section,
   Text,
-  Heading,
-  Button,
-  Img,
-  Hr,
-  Link,
 } from "@react-email/components";
 import { Tailwind } from "@react-email/tailwind";
+import { hackathonYear } from "@/config/site";
 
 type Props = { name: string };
 
 const AcceptanceEmail = ({ name }: Props) => (
   <Html>
-    <Head />
     <Preview>
       [ACTION REQUIRED] Congratulations, you have been accepted to Hack Canada
     </Preview>
-    <Tailwind>
-      <Body className="bg-blue-50">
-        <Container className="mx-auto max-w-2xl px-3 py-6">
+    <Tailwind
+      config={{
+        theme: {
+          extend: {
+            colors: {
+              primary: "#1E90FF",
+              primaryDark: "#1565C0",
+              background: "#FFFFFF",
+              backgroundMuted: "#F8FAFC",
+              textPrimary: "#1F2937",
+              textSecondary: "#4B5563",
+              textMuted: "#9CA3AF",
+            },
+          },
+        },
+      }}
+    >
+      <Head />
+      <Body
+        style={{
+          backgroundColor: "#F5F3FF",
+          margin: 0,
+          padding: 0,
+          fontFamily:
+            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+        }}
+      >
+        <Container
+          style={{ maxWidth: "600px", margin: "0 auto", padding: "20px 0" }}
+        >
           <Img
-            src="https://i.imgur.com/N36vrSu.png"
-            width={500}
+            src="https://i.imgur.com/JxmAG2V.jpeg"
+            width="600"
             alt="Hack Canada Banner"
-            className="w-full rounded-t-lg"
+            style={{
+              width: "100%",
+              maxWidth: "600px",
+              height: "auto",
+              display: "block",
+              borderRadius: "12px 12px 0 0",
+            }}
           />
-          <Section className="rounded-b-lg bg-white p-8 shadow-md">
-            <Heading className="mb-6 text-2xl font-semibold text-blue-500">
+
+          <Section
+            style={{
+              backgroundColor: "#FFFFFF",
+              borderRadius: "0 0 12px 12px",
+              padding: "40px 32px",
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <Heading
+              style={{
+                color: "#5B21B6",
+                fontSize: "28px",
+                fontWeight: "700",
+                margin: "0 0 16px 0",
+                textAlign: "center" as const,
+              }}
+            >
               🎉 Congratulations, {name}! 🎉
             </Heading>
-            <Text className="mt-4 text-zinc-700">
+
+            <Text
+              style={{
+                color: "#4B5563",
+                fontSize: "16px",
+                lineHeight: "26px",
+                margin: "0 0 16px 0",
+              }}
+            >
               After an intense application process... We would like to
               congratulate you on making it through!
             </Text>
-            <Text className="mt-4 text-zinc-700">
+            <Text
+              style={{
+                color: "#4B5563",
+                fontSize: "16px",
+                lineHeight: "26px",
+                margin: "0 0 16px 0",
+              }}
+            >
               This year we had sooo many applicants and the process was not
               easy. We found your application to stand out above the rest, like
               a rose in a dandelion field. Your creativity and passion were so
               strong, we could sense it from a mile away.
             </Text>
-            <Text className="mt-4 text-zinc-700">
+            <Text
+              style={{
+                color: "#4B5563",
+                fontSize: "16px",
+                lineHeight: "26px",
+                margin: "0 0 16px 0",
+              }}
+            >
               We would love to have you at Hack Canada, and we can&apos;t wait
               to see what amazing things you can build with us!
             </Text>
+
             <Section
               style={{
-                marginTop: "2rem",
-                paddingTop: "0.5rem",
-                paddingBottom: "1.5rem",
-                paddingLeft: "1.5rem",
-                paddingRight: "1.5rem",
-                border: "2px solid #60A5FA",
-                borderRadius: "0.5rem",
-                backgroundColor: "rgba(59, 130, 246, 0.05)",
-                boxShadow:
-                  "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+                background: "linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%)",
+                border: "2px solid #DDD6FE",
+                borderRadius: "12px",
+                padding: "24px",
+                margin: "0 0 32px 0",
               }}
             >
-              <Text className="text-lg font-semibold text-zinc-800">
+              <Text
+                style={{
+                  color: "#1F2937",
+                  fontSize: "18px",
+                  fontWeight: "600",
+                  margin: "0 0 16px 0",
+                }}
+              >
                 Event Details
               </Text>
-              <div className="mt-4 text-zinc-700">
-                <div className="mb-6">
-                  <div className="mb-2">
-                    <strong className="text-xs font-bold text-zinc-800">
+              <div
+                style={{
+                  color: "#4B5563",
+                  fontSize: "16px",
+                  lineHeight: "26px",
+                }}
+              >
+                <div style={{ marginBottom: "16px" }}>
+                  <div style={{ marginBottom: "4px" }}>
+                    <strong
+                      style={{
+                        color: "#1F2937",
+                        fontSize: "12px",
+                        fontWeight: "700",
+                      }}
+                    >
                       📍 WHERE
                     </strong>
                   </div>
                   <div>
-                    Lazaridis School of Business and Economics, 64 University
-                    Ave W, Waterloo, ON N2L 3C7
+                    SPUR Campus - Spur Innovation Center,
+                    <br />
+                    2240 University Ave,
+                    <br />
+                    Waterloo, ON N2K 0G3
                   </div>
                 </div>
                 <div>
-                  <div className="mb-2">
-                    <strong className="text-xs font-bold text-zinc-800">
+                  <div style={{ marginBottom: "4px" }}>
+                    <strong
+                      style={{
+                        color: "#1F2937",
+                        fontSize: "12px",
+                        fontWeight: "700",
+                      }}
+                    >
                       📅 WHEN
                     </strong>
                   </div>
-                  <div>February 21-23, 2025</div>
+                  <div>March 6-8, 2026</div>
                 </div>
               </div>
             </Section>
-            <Section className="mt-4 border-t border-blue-100">
-              <Heading className="text-xl font-semibold text-zinc-800">
-                What&apos;s Next?
-              </Heading>
-              <Text className="mt-4 text-zinc-700">
-                To make sure you&apos;re gonna be on our list of super cool
-                people, we need you to{" "}
-                <strong>RSVP within 7 days of receiving this email.</strong> We
-                also have some additional questions to make sure everything is
-                perfect for you.
-              </Text>
-              <Section className="mt-6 flex justify-center">
-                <Button
-                  href="https://app.hackcanada.org/rsvp"
-                  className="inline-block rounded-lg bg-[#0A1F44] px-8 py-3 text-center font-semibold text-white no-underline transition-all duration-200 hover:brightness-110"
-                >
-                  RSVP Now
-                </Button>
-              </Section>
-            </Section>
-            <Section className="mt-4 border-t border-blue-100">
-              <Heading className="text-xl font-semibold text-zinc-800">
-                Stay tuned for more details!
-              </Heading>
-              <Text className="mt-4 text-zinc-700">
-                At this moment we are still hammering out some of the logistics,
-                but event schedule, discord server, team formation information,
-                and other exciting updates will be shared with you closer to the
-                hackathon date!
-              </Text>
-              <Text className="mt-4 text-zinc-700">
-                If you have any questions or need anything, feel free to reach
-                out to us at{" "}
-                <a
-                  href="mailto:hello@hackcanada.org"
-                  className="text-zinc-800 underline"
-                >
-                  hello@hackcanada.org
-                </a>{" "}
-                — we&apos;re happy to assist!
-              </Text>
-              <Text className="mt-6 text-zinc-700">
-                We can&apos;t wait to see you!
-              </Text>
-              <Text className="mt-8 font-semibold text-zinc-800">Cheers,</Text>
-              <Text className="mb-8 mt-2 font-semibold text-blue-500">
-                Hack Canada Team 🦫🍁
-              </Text>
 
-              <Hr className="my-6 border-gray-200" />
+            <Hr
+              style={{
+                border: "none",
+                borderTop: "1px solid #E5E7EB",
+                margin: "32px 0",
+              }}
+            />
 
-              {/* Footer */}
-              <div className="text-center">
-                <div className="mb-4">
-                  <Link
-                    className="text-xs text-gray-400 no-underline"
-                    href="https://hackcanada.org"
-                  >
-                    Hack Canada
-                  </Link>
-                  <span className="mx-3 text-gray-400">|</span>
-                  <Link
-                    className="text-xs text-gray-400 no-underline"
-                    href="https://app.hackcanada.org"
-                  >
-                    Dashboard
-                  </Link>
-                  <span className="mx-3 text-gray-400">|</span>
-                  <Link
-                    className="text-xs text-gray-400 no-underline"
-                    href="https://discord.gg/wp42amwcWy"
-                  >
-                    Discord
-                  </Link>
-                  <span className="mx-3 text-gray-400">|</span>
-                  <Link
-                    className="text-xs text-gray-400 no-underline"
-                    href="https://www.instagram.com/hackcanada/"
-                  >
-                    Instagram
-                  </Link>
-                  <span className="mx-3 text-gray-400">|</span>
-                  <Link
-                    className="text-xs text-gray-400 no-underline"
-                    href="https://www.linkedin.com/company/hack-canada"
-                  >
-                    LinkedIn
-                  </Link>
-                  <span className="mx-3 text-gray-400">|</span>
-                  <Link
-                    className="text-xs text-gray-400 no-underline"
-                    href="mailto:hello@hackcanada.org"
-                  >
-                    Email
-                  </Link>
-                </div>
-                <Text className="m-2 text-xs text-gray-400">
-                  Copyright © 2025 Hack Canada
-                </Text>
-                <Text className="m-2 text-xs text-gray-400">
-                  All rights reserved.
-                </Text>
+            <Heading
+              style={{
+                color: "#1F2937",
+                fontSize: "20px",
+                fontWeight: "600",
+                margin: "0 0 16px 0",
+              }}
+            >
+              What&apos;s Next?
+            </Heading>
+            <Text
+              style={{
+                color: "#4B5563",
+                fontSize: "16px",
+                lineHeight: "26px",
+                margin: "0 0 16px 0",
+              }}
+            >
+              To make sure you&apos;re gonna be on our list of super cool
+              people, we need you to{" "}
+              <strong>RSVP within 7 days of receiving this email.</strong> We
+              also have some additional questions to make sure everything is
+              perfect for you.
+            </Text>
+
+            <div style={{ textAlign: "center" as const, margin: "24px 0" }}>
+              <Button
+                href="https://app.hackcanada.org/rsvp"
+                style={{
+                  backgroundColor: "#5B21B6",
+                  color: "#FFFFFF",
+                  fontSize: "16px",
+                  fontWeight: "600",
+                  textDecoration: "none",
+                  display: "inline-block",
+                  padding: "12px 32px",
+                  borderRadius: "8px",
+                }}
+              >
+                RSVP Now
+              </Button>
+            </div>
+
+            <Hr
+              style={{
+                border: "none",
+                borderTop: "1px solid #E5E7EB",
+                margin: "32px 0",
+              }}
+            />
+
+            <Heading
+              style={{
+                color: "#1F2937",
+                fontSize: "20px",
+                fontWeight: "600",
+                margin: "0 0 16px 0",
+              }}
+            >
+              Stay tuned for more details!
+            </Heading>
+            <Text
+              style={{
+                color: "#4B5563",
+                fontSize: "16px",
+                lineHeight: "26px",
+                margin: "0 0 16px 0",
+              }}
+            >
+              At this moment we are still hammering out some of the logistics,
+              but event schedule, discord server, team formation information,
+              and other exciting updates will be shared with you closer to the
+              hackathon date!
+            </Text>
+            <Text
+              style={{
+                color: "#4B5563",
+                fontSize: "16px",
+                lineHeight: "26px",
+                margin: "0 0 16px 0",
+              }}
+            >
+              If you have any questions or need anything, feel free to reach out
+              to us at{" "}
+              <a
+                href="mailto:hi@hackcanada.org"
+                style={{ color: "#1F2937", textDecoration: "underline" }}
+              >
+                hi@hackcanada.org
+              </a>{" "}
+              — we&apos;re happy to assist!
+            </Text>
+            <Text
+              style={{
+                color: "#4B5563",
+                fontSize: "16px",
+                lineHeight: "26px",
+                margin: "16px 0 0 0",
+              }}
+            >
+              We can&apos;t wait to see you!
+            </Text>
+
+            <Text
+              style={{
+                color: "#4B5563",
+                fontSize: "16px",
+                lineHeight: "26px",
+                margin: "28px 0 4px 0",
+              }}
+            >
+              Cheers,
+            </Text>
+            <Text
+              style={{
+                color: "#5B21B6",
+                fontSize: "16px",
+                fontWeight: "600",
+                margin: "0",
+              }}
+            >
+              The Hack Canada Team
+            </Text>
+
+            <Hr
+              style={{
+                border: "none",
+                borderTop: "1px solid #E5E7EB",
+                margin: "32px 0",
+              }}
+            />
+
+            <div style={{ textAlign: "center" as const }}>
+              <div style={{ marginBottom: "8px" }}>
+                <Link
+                  href="https://hackcanada.org"
+                  target="_blank"
+                  style={{
+                    color: "#9CA3AF",
+                    fontSize: "12px",
+                    textDecoration: "none",
+                    margin: "0 6px",
+                  }}
+                >
+                  Website
+                </Link>
+                <span style={{ color: "#D1D5DB" }}>·</span>
+                <Link
+                  href="https://app.hackcanada.org"
+                  target="_blank"
+                  style={{
+                    color: "#9CA3AF",
+                    fontSize: "12px",
+                    textDecoration: "none",
+                    margin: "0 6px",
+                  }}
+                >
+                  Dashboard
+                </Link>
+                <span style={{ color: "#D1D5DB" }}>·</span>
+                <Link
+                  href="https://discord.gg/YpYeJPvUvU"
+                  target="_blank"
+                  style={{
+                    color: "#9CA3AF",
+                    fontSize: "12px",
+                    textDecoration: "none",
+                    margin: "0 6px",
+                  }}
+                >
+                  Discord
+                </Link>
+                <span style={{ color: "#D1D5DB" }}>·</span>
+                <Link
+                  href="mailto:hi@hackcanada.org"
+                  style={{
+                    color: "#9CA3AF",
+                    fontSize: "12px",
+                    textDecoration: "none",
+                    margin: "0 6px",
+                  }}
+                >
+                  Contact
+                </Link>
               </div>
-            </Section>
+              <Text
+                style={{
+                  color: "#9CA3AF",
+                  fontSize: "12px",
+                  lineHeight: "18px",
+                  margin: "4px 0 0 0",
+                }}
+              >
+                © {hackathonYear} Hack Canada. All rights reserved.
+              </Text>
+            </div>
           </Section>
+
+          <div
+            style={{
+              height: "4px",
+              background:
+                "linear-gradient(90deg, #A78BFA, #C084FC, #F472B6, #FB923C)",
+              borderRadius: "0 0 12px 12px",
+              marginTop: "-4px",
+            }}
+          />
         </Container>
       </Body>
     </Tailwind>

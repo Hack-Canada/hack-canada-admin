@@ -91,10 +91,7 @@ const AcceptanceEmail = ({ name }: Props) => (
                 lineHeight: "22px",
                 margin: "0",
               }}
-            >
-              We accidentally sent an outdated email earlier — please ignore it.
-              This is the correct and official acceptance email for Hack Canada {hackathonYear}. We apologize for any confusion!
-            </Text>
+            ></Text>
           </Section>
 
           <Section
@@ -128,8 +125,8 @@ const AcceptanceEmail = ({ name }: Props) => (
               After an intense application process... We would like to
               congratulate you on making it through!{" "}
               <strong>
-                Also, that previous message? Pretend it never happened. Technical
-                chaos ensued, and we&apos;d rather not talk about it.
+                Also, that previous message? Pretend it never happened.
+                Technical chaos ensued, and we&apos;d rather not talk about it.
               </strong>
             </Text>
             <Text

@@ -95,11 +95,11 @@ const AcceptanceEmail = ({ name }: Props) => (
             >
               After an intense application process... We would like to
               congratulate you on making it through!{" "}
-              {/* <strong>
+              <strong>
                 Also, that previous message? Pretend it never happened. We were
                 just testing if you check your email. (Technical chaos ensued,
                 and we&apos;d rather not talk about it.)
-              </strong> */}
+              </strong>
             </Text>
             <Text
               style={{

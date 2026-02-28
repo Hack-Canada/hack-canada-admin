@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 import { RESULTS_PER_PAGE } from "@/lib/constants";
 import RsvpTable from "@/components/rsvp/RsvpTable";
 import RsvpFilters from "@/components/rsvp/RsvpFilters";
+import DietaryInsights from "@/components/rsvp/DietaryInsights";
 
 interface RsvpPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -58,6 +59,11 @@ export default async function RsvpPage(props: RsvpPageProps) {
           <CountCard key={s.size} label={`Size ${s.size}`} count={s.count} />
         ))}
       </div>
+
+      <DietaryInsights
+        dietaryCounts={stats.dietaryCounts}
+        total={stats.total}
+      />
 
       <RsvpFilters />
 

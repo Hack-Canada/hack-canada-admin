@@ -67,6 +67,35 @@ const AcceptanceEmail = ({ name }: Props) => (
 
           <Section
             style={{
+              backgroundColor: "#FEF3C7",
+              border: "2px solid #F59E0B",
+              borderRadius: "8px",
+              padding: "16px 24px",
+              margin: "12px 0",
+            }}
+          >
+            <Text
+              style={{
+                color: "#92400E",
+                fontSize: "14px",
+                fontWeight: "700",
+                margin: "0 0 4px 0",
+              }}
+            >
+              ⚠️ Please disregard our previous email
+            </Text>
+            <Text
+              style={{
+                color: "#92400E",
+                fontSize: "14px",
+                lineHeight: "22px",
+                margin: "0",
+              }}
+            ></Text>
+          </Section>
+
+          <Section
+            style={{
               backgroundColor: "#FFFFFF",
               borderRadius: "0 0 12px 12px",
               padding: "40px 32px",

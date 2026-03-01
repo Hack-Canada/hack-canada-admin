@@ -99,15 +99,65 @@ const ReminderEmail = () => (
 
             <div style={{ textAlign: "center" as const }}>
               <div style={{ marginBottom: "8px" }}>
-                <Link href="https://hackcanada.org" target="_blank" style={{ color: "#9CA3AF", fontSize: "12px", textDecoration: "none", margin: "0 6px" }}>Website</Link>
+                <Link
+                  href="https://hackcanada.org"
+                  target="_blank"
+                  style={{
+                    color: "#9CA3AF",
+                    fontSize: "12px",
+                    textDecoration: "none",
+                    margin: "0 6px",
+                  }}
+                >
+                  Website
+                </Link>
                 <span style={{ color: "#D1D5DB" }}>·</span>
-                <Link href="https://app.hackcanada.org" target="_blank" style={{ color: "#9CA3AF", fontSize: "12px", textDecoration: "none", margin: "0 6px" }}>Dashboard</Link>
+                <Link
+                  href="https://app.hackcanada.org"
+                  target="_blank"
+                  style={{
+                    color: "#9CA3AF",
+                    fontSize: "12px",
+                    textDecoration: "none",
+                    margin: "0 6px",
+                  }}
+                >
+                  Dashboard
+                </Link>
                 <span style={{ color: "#D1D5DB" }}>·</span>
-                <Link href="https://discord.gg/YpYeJPvUvU" target="_blank" style={{ color: "#9CA3AF", fontSize: "12px", textDecoration: "none", margin: "0 6px" }}>Discord</Link>
+                <Link
+                  href="https://discord.gg/YpYeJPvUvU"
+                  target="_blank"
+                  style={{
+                    color: "#9CA3AF",
+                    fontSize: "12px",
+                    textDecoration: "none",
+                    margin: "0 6px",
+                  }}
+                >
+                  Discord
+                </Link>
                 <span style={{ color: "#D1D5DB" }}>·</span>
-                <Link href="mailto:hi@hackcanada.org" style={{ color: "#9CA3AF", fontSize: "12px", textDecoration: "none", margin: "0 6px" }}>Contact</Link>
+                <Link
+                  href="mailto:hi@hackcanada.org"
+                  style={{
+                    color: "#9CA3AF",
+                    fontSize: "12px",
+                    textDecoration: "none",
+                    margin: "0 6px",
+                  }}
+                >
+                  Contact
+                </Link>
               </div>
-              <Text style={{ color: "#9CA3AF", fontSize: "12px", lineHeight: "18px", margin: "4px 0 0 0" }}>
+              <Text
+                style={{
+                  color: "#9CA3AF",
+                  fontSize: "12px",
+                  lineHeight: "18px",
+                  margin: "4px 0 0 0",
+                }}
+              >
                 © {hackathonYear} Hack Canada. All rights reserved.
               </Text>
             </div>

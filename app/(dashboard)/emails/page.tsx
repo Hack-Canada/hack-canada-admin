@@ -18,7 +18,7 @@ export default async function EmailsPage() {
         heading="Email Management"
         subheading="Preview email templates and send test emails. Use with caution — emails are sent via AWS SES."
       />
-      <EmailTemplateList />
+      <EmailTemplateList adminUserId={user.id} />
     </Container>
   );
 }

@@ -22,40 +22,43 @@ const sendTestEmailSchema = z.object({
     "rsvp-reminder",
   ]),
   recipientEmail: z.string().email(),
+  name: z.string().optional().default("Alex Johnson"),
+  userId: z.string().optional().default("preview-id"),
 });
 
-const templateMap: Record<
-  string,
-  { subject: string; render: () => string | Promise<string> }
-> = {
-  acceptance: {
-    subject:
-      "[TEST] Congratulations, you have been accepted to Hack Canada",
-    render: () => render(AcceptanceEmail({ name: "Test User" })),
-  },
-  rejection: {
-    subject: "[TEST] Thank You for Your Application to Hack Canada",
-    render: () => render(RejectionEmail({ name: "Test User" })),
-  },
-  reminder: {
-    subject:
-      "[TEST] We Noticed You Haven't Applied Yet – Don't Miss Out on Hack Canada!",
-    render: () => render(ReminderEmail()),
-  },
-  onboarding: {
-    subject: "[TEST] Welcome - Important Event Information",
-    render: () =>
-      render(OnboardingEmail({ name: "Test User", userId: "test-id" })),
-  },
-  "hackathon-prep": {
-    subject: "[TEST] Hack Canada Event Details and Check-in Information",
-    render: () =>
-      render(HackathonPrepEmail({ name: "Test User", userId: "test-id" })),
-  },
-  "rsvp-reminder": {
-    subject: "[TEST] Final RSVP Reminder - Please Respond for Hack Canada",
-    render: () => render(RSVPReminder({ name: "Test User" })),
-  },
+const PROD_SUBJECTS: Record<string, string> = {
+  acceptance:
+    "[ACTION REQUIRED] Congratulations, you have been accepted to Hack Canada",
+  rejection: "Thank You for Your Application to Hack Canada",
+  reminder:
+    "We Noticed You Haven't Applied Yet – Don't Miss Out on Hack Canada!",
+  onboarding: "🎉 Welcome to - Important Event Information",
+  "hackathon-prep": "🚀 Hack Canada Event Details and Check-in Information",
+  "rsvp-reminder":
+    "🚨 Urgent: Final RSVP Reminder - Please Respond by Tonight for Hack Canada",
+};
+
+const renderTemplate = (
+  template: string,
+  name: string,
+  userId: string,
+): Promise<string> => {
+  switch (template) {
+    case "acceptance":
+      return render(AcceptanceEmail({ name }));
+    case "rejection":
+      return render(RejectionEmail({ name }));
+    case "reminder":
+      return render(ReminderEmail());
+    case "onboarding":
+      return render(OnboardingEmail({ name, userId }));
+    case "hackathon-prep":
+      return render(HackathonPrepEmail({ name, userId }));
+    case "rsvp-reminder":
+      return render(RSVPReminder({ name }));
+    default:
+      throw new Error("Invalid template");
+  }
 };
 
 export async function POST(
@@ -81,22 +84,18 @@ export async function POST(
       });
     }
 
-    const { template, recipientEmail } = validatedFields.data;
-    const templateConfig = templateMap[template];
+    const { template, recipientEmail, name, userId } = validatedFields.data;
+    const subject = PROD_SUBJECTS[template];
 
-    if (!templateConfig) {
+    if (!subject) {
       return NextResponse.json({
         success: false,
         message: "Invalid template.",
       });
     }
 
-    const htmlBody = await templateConfig.render();
-    const result = await sendEmail(
-      recipientEmail,
-      templateConfig.subject,
-      htmlBody,
-    );
+    const htmlBody = await renderTemplate(template, name, userId);
+    const result = await sendEmail(recipientEmail, subject, htmlBody);
 
     if ("error" in result) {
       return NextResponse.json({

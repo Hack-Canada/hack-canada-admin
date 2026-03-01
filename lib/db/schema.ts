@@ -355,3 +355,24 @@ export const schedule = pgTable("schedule", {
 
 export type Schedule = typeof schedule.$inferSelect;
 export type NewSchedule = typeof schedule.$inferInsert;
+
+export const banners = pgTable("banner", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  type: text("type").notNull().default("info"), // "info" | "warning" | "success" | "error"
+  message: text("message").notNull(),
+  linkText: text("linkText"),
+  linkUrl: text("linkUrl"),
+  isActive: boolean("isActive").notNull().default(true),
+  expiresAt: timestamp("expiresAt"),
+  createdAt: timestamp("createdAt")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: timestamp("updatedAt")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+});
+
+export type Banner = typeof banners.$inferSelect;
+export type NewBanner = typeof banners.$inferInsert;

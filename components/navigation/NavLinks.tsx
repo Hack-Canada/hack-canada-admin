@@ -17,6 +17,7 @@ import {
   Mail,
   Calendar,
   Settings,
+  Megaphone,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 
@@ -34,6 +35,7 @@ const iconMap = {
   "RSVP Management": CalendarCheck,
   "Check-Ins": ScanLine,
   Emails: Mail,
+  Banners: Megaphone,
   Schedule: Calendar,
   Settings: Settings,
 };
@@ -54,7 +56,8 @@ const NavLinks = ({ isMinimized, onNavigate }: NavLinksProps) => {
     <ul className="w-full space-y-2 pb-8">
       {navLinks
         .filter((link) => {
-          if (link.roles) return userRole ? link.roles.includes(userRole) : false;
+          if (link.roles)
+            return userRole ? link.roles.includes(userRole) : false;
           return !link.adminOnly || isAdmin;
         })
         .map((link) => {

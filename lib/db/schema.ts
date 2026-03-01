@@ -42,7 +42,7 @@ export const passwordResetTokens = pgTable("passwordResetToken", {
     .default(sql`CURRENT_TIMESTAMP`),
   userId: text("userId")
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: "cascade" }),
 });
 
 export const accounts = pgTable(
@@ -257,7 +257,7 @@ export const auditLogs = pgTable("auditLog", {
     .$defaultFn(() => crypto.randomUUID()),
   userId: text("userId")
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: "cascade" }),
   action: text("action").notNull(),
   entityType: text("entityType").notNull(),
   entityId: text("entityId").notNull(),

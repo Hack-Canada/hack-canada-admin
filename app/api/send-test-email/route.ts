@@ -32,7 +32,7 @@ const PROD_SUBJECTS: Record<string, string> = {
   rejection: "Thank You for Your Application to Hack Canada",
   reminder:
     "We Noticed You Haven't Applied Yet – Don't Miss Out on Hack Canada!",
-  onboarding: "🎉 Welcome to - Important Event Information",
+  onboarding: "Important Links and Information for Hack Canada 2026",
   "hackathon-prep": "🚀 Hack Canada Event Details and Check-in Information",
   "rsvp-reminder":
     "🚨 Urgent: Final RSVP Reminder - Please Respond by Tonight for Hack Canada",

@@ -45,10 +45,10 @@ const EMAIL_TEMPLATES = [
   },
   {
     id: "onboarding",
-    name: "Onboarding Email",
+    name: "Hacker Information Email",
     description:
-      "Sent to accepted hackers with important event information and next steps.",
-    subject: "🎉 Welcome to - Important Event Information",
+      "Sent to accepted hackers with important links (Schedule, Discord, Devpost, Hacker Package).",
+    subject: "Important Links and Information for Hack Canada 2026",
     needsUserId: true,
   },
   {

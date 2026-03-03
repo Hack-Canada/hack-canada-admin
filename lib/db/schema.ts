@@ -376,3 +376,55 @@ export const banners = pgTable("banner", {
 
 export type Banner = typeof banners.$inferSelect;
 export type NewBanner = typeof banners.$inferInsert;
+
+export const emailCampaigns = pgTable("emailCampaign", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  templateId: text("templateId").notNull(),
+  subject: text("subject").notNull(),
+  customHtml: text("customHtml"),
+  audienceFilter: text("audienceFilter").notNull(),
+  totalRecipients: integer("totalRecipients").notNull().default(0),
+  sentCount: integer("sentCount").notNull().default(0),
+  failedCount: integer("failedCount").notNull().default(0),
+  status: text("status").notNull().default("draft"),
+  createdById: text("createdById")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  approvedById: text("approvedById").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  approvedAt: timestamp("approvedAt"),
+  sentAt: timestamp("sentAt"),
+  completedAt: timestamp("completedAt"),
+  createdAt: timestamp("createdAt")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: timestamp("updatedAt")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+});
+
+export type EmailCampaign = typeof emailCampaigns.$inferSelect;
+export type NewEmailCampaign = typeof emailCampaigns.$inferInsert;
+
+export const emailCampaignRecipients = pgTable("emailCampaignRecipient", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  campaignId: text("campaignId")
+    .notNull()
+    .references(() => emailCampaigns.id, { onDelete: "cascade" }),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  email: text("email").notNull(),
+  name: text("name").notNull(),
+  status: text("status").notNull().default("pending"),
+  sentAt: timestamp("sentAt"),
+  error: text("error"),
+});
+
+export type EmailCampaignRecipient = typeof emailCampaignRecipients.$inferSelect;
+export type NewEmailCampaignRecipient = typeof emailCampaignRecipients.$inferInsert;

@@ -101,8 +101,15 @@ const EmailTemplateList = ({ adminUserId }: EmailTemplateListProps) => {
         return;
       }
 
-      const html = await res.text();
-      setPreviewHtml(html);
+      const data = await res.json();
+
+      if (!data.success || !data.data) {
+        toast.error(data.message || "Failed to load preview");
+        setPreviewTemplate(null);
+        return;
+      }
+
+      setPreviewHtml(data.data);
     } catch {
       toast.error("Failed to load preview");
       setPreviewTemplate(null);

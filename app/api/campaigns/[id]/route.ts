@@ -150,6 +150,16 @@ export async function PATCH(
       }),
     });
 
+    if (!updated) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Failed to update campaign",
+        },
+        { status: 500 },
+      );
+    }
+
     await createAuditLog({
       userId: user.id,
       action: "update",
@@ -161,12 +171,12 @@ export async function PATCH(
         totalRecipients: existingCampaign.totalRecipients,
       },
       newValue: {
-        templateId: updated?.templateId,
-        subject: updated?.subject,
-        totalRecipients: updated?.totalRecipients,
+        templateId: updated.templateId,
+        subject: updated.subject,
+        totalRecipients: updated.totalRecipients,
       },
       metadata: {
-        description: `${user.name || user.email} updated email campaign "${updated?.subject?.slice(0, 50)}..."`,
+        description: `${user.name || user.email} updated email campaign "${updated.subject.slice(0, 50)}..."`,
       },
     });
 

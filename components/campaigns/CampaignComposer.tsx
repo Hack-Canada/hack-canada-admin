@@ -152,7 +152,8 @@ export function CampaignComposer() {
     if (currentStep === "preview" && selectedTemplate) {
       loadEmailPreview();
     }
-  }, [currentStep, selectedTemplate, previewName]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep, selectedTemplate, previewName, customContent]);
 
   const handleSendTest = async () => {
     if (!testEmails.trim()) {

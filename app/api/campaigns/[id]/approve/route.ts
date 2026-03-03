@@ -80,6 +80,16 @@ export async function POST(
         approvedAt: new Date(),
       });
 
+      if (!updated) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Failed to approve campaign",
+          },
+          { status: 500 },
+        );
+      }
+
       await createAuditLog({
         userId: user.id,
         action: "update",
@@ -106,6 +116,16 @@ export async function POST(
       const updated = await updateCampaign(id, {
         status: "draft",
       });
+
+      if (!updated) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Failed to reject campaign",
+          },
+          { status: 500 },
+        );
+      }
 
       await createAuditLog({
         userId: user.id,

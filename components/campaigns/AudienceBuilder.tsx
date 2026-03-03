@@ -127,7 +127,10 @@ export function AudienceBuilder({ value, onChange, disabled }: Props) {
       setSelectedPreset(presetId);
       onChange({
         preset: presetId,
-        ...preset.filter,
+        applicationStatus: preset.filter.applicationStatus
+          ? [...preset.filter.applicationStatus]
+          : undefined,
+        hasRsvp: preset.filter.hasRsvp,
         searchQuery: value.searchQuery,
       });
     }

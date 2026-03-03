@@ -41,12 +41,12 @@ const PROD_SUBJECTS: Record<string, string> = {
     "🚨 Urgent: Final RSVP Reminder - Please Respond by Tonight for Hack Canada",
 };
 
-const renderTemplate = (
+const renderTemplate = async (
   template: string,
   name: string,
   userId: string,
   customHtml?: string,
-): Promise<string> | string => {
+): Promise<string> => {
   if (template === "custom" && customHtml) {
     return customHtml.replace(/\{name\}/g, name.split(" ")[0] || name);
   }

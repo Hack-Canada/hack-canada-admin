@@ -53,7 +53,7 @@ const RSVPReminder = ({ name }: Props) => (
           style={{ maxWidth: "600px", margin: "0 auto", padding: "20px 0" }}
         >
           <Img
-            src="https://i.imgur.com/N36vrSu.png"
+            src="https://i.imgur.com/JxmAG2V.jpeg"
             width="600"
             alt="Hack Canada Banner"
             style={{
@@ -104,8 +104,8 @@ const RSVPReminder = ({ name }: Props) => (
               }}
             >
               We noticed you haven&apos;t confirmed your spot for Hack Canada
-              happening tomorrow! We need your immediate response to ensure we can
-              accommodate everyone properly.
+              happening tomorrow! We need your immediate response to ensure we
+              can accommodate everyone properly.
             </Text>
             <Text
               style={{
@@ -117,9 +117,9 @@ const RSVPReminder = ({ name }: Props) => (
               }}
             >
               Please RSVP by tonight (March 5th, 2026 at 11:59 PM EST) if you
-              would still like to join us for the hackathon. If we don&apos;t hear
-              back from you, we may have to release your spot to someone on the
-              waitlist.
+              would still like to join us for the hackathon. If we don&apos;t
+              hear back from you, we may have to release your spot to someone on
+              the waitlist.
             </Text>
 
             <div style={{ textAlign: "center" as const, margin: "24px 0" }}>
@@ -185,10 +185,10 @@ const RSVPReminder = ({ name }: Props) => (
                 margin: "0 0 16px 0",
               }}
             >
-              If you have decided not to attend Hack Canada, please use the Cancel
-              RSVP button above to let us know before 11:59 PM EST on March 5th. This
-              will help us offer your spot to someone on our waitlist who is eager
-              to participate.
+              If you have decided not to attend Hack Canada, please use the
+              Cancel RSVP button above to let us know before 11:59 PM EST on
+              March 5th. This will help us offer your spot to someone on our
+              waitlist who is eager to participate.
             </Text>
 
             <Text
@@ -240,15 +240,65 @@ const RSVPReminder = ({ name }: Props) => (
 
             <div style={{ textAlign: "center" as const }}>
               <div style={{ marginBottom: "8px" }}>
-                <Link href="https://hackcanada.org" target="_blank" style={{ color: "#9CA3AF", fontSize: "12px", textDecoration: "none", margin: "0 6px" }}>Website</Link>
+                <Link
+                  href="https://hackcanada.org"
+                  target="_blank"
+                  style={{
+                    color: "#9CA3AF",
+                    fontSize: "12px",
+                    textDecoration: "none",
+                    margin: "0 6px",
+                  }}
+                >
+                  Website
+                </Link>
                 <span style={{ color: "#D1D5DB" }}>·</span>
-                <Link href="https://app.hackcanada.org" target="_blank" style={{ color: "#9CA3AF", fontSize: "12px", textDecoration: "none", margin: "0 6px" }}>Dashboard</Link>
+                <Link
+                  href="https://app.hackcanada.org"
+                  target="_blank"
+                  style={{
+                    color: "#9CA3AF",
+                    fontSize: "12px",
+                    textDecoration: "none",
+                    margin: "0 6px",
+                  }}
+                >
+                  Dashboard
+                </Link>
                 <span style={{ color: "#D1D5DB" }}>·</span>
-                <Link href="https://discord.gg/YpYeJPvUvU" target="_blank" style={{ color: "#9CA3AF", fontSize: "12px", textDecoration: "none", margin: "0 6px" }}>Discord</Link>
+                <Link
+                  href="https://discord.gg/YpYeJPvUvU"
+                  target="_blank"
+                  style={{
+                    color: "#9CA3AF",
+                    fontSize: "12px",
+                    textDecoration: "none",
+                    margin: "0 6px",
+                  }}
+                >
+                  Discord
+                </Link>
                 <span style={{ color: "#D1D5DB" }}>·</span>
-                <Link href="mailto:hi@hackcanada.org" style={{ color: "#9CA3AF", fontSize: "12px", textDecoration: "none", margin: "0 6px" }}>Contact</Link>
+                <Link
+                  href="mailto:hi@hackcanada.org"
+                  style={{
+                    color: "#9CA3AF",
+                    fontSize: "12px",
+                    textDecoration: "none",
+                    margin: "0 6px",
+                  }}
+                >
+                  Contact
+                </Link>
               </div>
-              <Text style={{ color: "#9CA3AF", fontSize: "12px", lineHeight: "18px", margin: "4px 0 0 0" }}>
+              <Text
+                style={{
+                  color: "#9CA3AF",
+                  fontSize: "12px",
+                  lineHeight: "18px",
+                  margin: "4px 0 0 0",
+                }}
+              >
                 © {hackathonYear} Hack Canada. All rights reserved.
               </Text>
             </div>

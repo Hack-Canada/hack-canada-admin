@@ -11,14 +11,14 @@ import {
   UserCheck,
 } from "lucide-react";
 import Link from "next/link";
-import { User } from "@/lib/db/schema";
+import { UserWithAccounts } from "@/data/user";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserStatusBadge } from "./search/UserStatusBadge";
 import InfoRow from "./InfoRow";
 import EmergencyContactInfo from "./EmergencyContactInfo";
 
 type Props = {
-  user: User;
+  user: UserWithAccounts;
 };
 
 const UserInfo = async ({ user }: Props) => {
@@ -74,11 +74,13 @@ const UserInfo = async ({ user }: Props) => {
             icon={<FileCheck className="size-4" />}
           />
           <InfoRow
-            label="Email Verified"
+            label="Email Verification"
             value={
-              user.emailVerified
+              user.accounts.length > 0
+                ? `Signed up via ${user.accounts.map(acc => acc.provider).join(", ")}`
+                : user.emailVerified
                 ? formatDate(user.emailVerified.toString())
-                : "N/A"
+                : "Not verified"
             }
             icon={<Clock className="size-4" />}
           />

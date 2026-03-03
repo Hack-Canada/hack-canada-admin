@@ -20,10 +20,13 @@ const sendTestEmailSchema = z.object({
     "onboarding",
     "hackathon-prep",
     "rsvp-reminder",
+    "custom",
   ]),
   recipientEmail: z.string().email(),
   name: z.string().optional().default("Alex Johnson"),
   userId: z.string().optional().default("preview-id"),
+  customHtml: z.string().optional(),
+  subject: z.string().optional(),
 });
 
 const PROD_SUBJECTS: Record<string, string> = {
@@ -42,7 +45,12 @@ const renderTemplate = (
   template: string,
   name: string,
   userId: string,
-): Promise<string> => {
+  customHtml?: string,
+): Promise<string> | string => {
+  if (template === "custom" && customHtml) {
+    return customHtml.replace(/\{name\}/g, name.split(" ")[0] || name);
+  }
+
   switch (template) {
     case "acceptance":
       return render(AcceptanceEmail({ name }));
@@ -84,17 +92,28 @@ export async function POST(
       });
     }
 
-    const { template, recipientEmail, name, userId } = validatedFields.data;
-    const subject = PROD_SUBJECTS[template];
+    const { template, recipientEmail, name, userId, customHtml, subject: customSubject } = validatedFields.data;
 
-    if (!subject) {
-      return NextResponse.json({
-        success: false,
-        message: "Invalid template.",
-      });
+    let subject: string;
+    if (template === "custom") {
+      if (!customSubject) {
+        return NextResponse.json({
+          success: false,
+          message: "Subject is required for custom emails.",
+        });
+      }
+      subject = customSubject;
+    } else {
+      subject = PROD_SUBJECTS[template];
+      if (!subject) {
+        return NextResponse.json({
+          success: false,
+          message: "Invalid template.",
+        });
+      }
     }
 
-    const htmlBody = await renderTemplate(template, name, userId);
+    const htmlBody = await renderTemplate(template, name, userId, customHtml);
     const result = await sendEmail(recipientEmail, subject, htmlBody);
 
     if ("error" in result) {

@@ -3,7 +3,7 @@ import Container from "@/components/Container";
 import PageBanner from "@/components/PageBanner";
 import { isAdmin } from "@/lib/utils";
 import { redirect } from "next/navigation";
-import EmailTemplateList from "@/components/Emails/EmailTemplateList";
+import { EmailDashboard } from "@/components/campaigns/EmailDashboard";
 
 export default async function EmailsPage() {
   const user = await getCurrentUser();
@@ -15,10 +15,10 @@ export default async function EmailsPage() {
   return (
     <Container className="space-y-6 md:space-y-10">
       <PageBanner
-        heading="Email Management"
-        subheading="Preview email templates and send test emails. Use with caution — emails are sent via AWS SES."
+        heading="Email Campaign Dashboard"
+        subheading="Create and manage email campaigns with dual-admin approval. Preview templates, send test emails, and track delivery progress."
       />
-      <EmailTemplateList adminUserId={user.id} />
+      <EmailDashboard currentUserId={user.id} />
     </Container>
   );
 }

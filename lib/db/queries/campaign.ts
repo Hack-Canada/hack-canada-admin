@@ -207,21 +207,26 @@ export async function queryUsersWithFilter(filter: AudienceFilter) {
     conditions.push(inArray(users.role, filter.roles));
   }
 
-  const baseQuery = db
-    .select({
-      id: users.id,
-      name: users.name,
-      email: users.email,
-      applicationStatus: users.applicationStatus,
-      rsvpAt: users.rsvpAt,
-      role: users.role,
-    })
-    .from(users);
+  if (filter.searchQuery) {
+    conditions.push(
+      or(
+        ilike(users.name, `%${filter.searchQuery}%`),
+        ilike(users.email, `%${filter.searchQuery}%`),
+      )!,
+    );
+  }
 
-  let query = baseQuery;
+  const needsJoin = filter.school || filter.levelOfStudy;
 
-  if (filter.school || filter.levelOfStudy) {
-    query = db
+  if (needsJoin) {
+    if (filter.school) {
+      conditions.push(ilike(hackerApplications.school, `%${filter.school}%`));
+    }
+    if (filter.levelOfStudy) {
+      conditions.push(eq(hackerApplications.levelOfStudy, filter.levelOfStudy));
+    }
+
+    const query = db
       .select({
         id: users.id,
         name: users.name,
@@ -231,24 +236,25 @@ export async function queryUsersWithFilter(filter: AudienceFilter) {
         role: users.role,
       })
       .from(users)
-      .leftJoin(hackerApplications, eq(users.id, hackerApplications.userId)) as typeof baseQuery;
+      .leftJoin(hackerApplications, eq(users.id, hackerApplications.userId));
 
-    if (filter.school) {
-      conditions.push(ilike(hackerApplications.school, `%${filter.school}%`));
+    if (conditions.length === 0) {
+      return await query.orderBy(users.name);
     }
-    if (filter.levelOfStudy) {
-      conditions.push(eq(hackerApplications.levelOfStudy, filter.levelOfStudy));
-    }
+
+    return await query.where(and(...conditions)).orderBy(users.name);
   }
 
-  if (filter.searchQuery) {
-    conditions.push(
-      or(
-        ilike(users.name, `%${filter.searchQuery}%`),
-        ilike(users.email, `%${filter.searchQuery}%`),
-      )!,
-    );
-  }
+  const query = db
+    .select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      applicationStatus: users.applicationStatus,
+      rsvpAt: users.rsvpAt,
+      role: users.role,
+    })
+    .from(users);
 
   if (conditions.length === 0) {
     return await query.orderBy(users.name);

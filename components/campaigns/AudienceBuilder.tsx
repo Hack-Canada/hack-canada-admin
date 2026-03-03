@@ -125,12 +125,16 @@ export function AudienceBuilder({ value, onChange, disabled }: Props) {
     const preset = AUDIENCE_PRESETS.find((p) => p.id === presetId);
     if (preset) {
       setSelectedPreset(presetId);
+      const filter = preset.filter as {
+        applicationStatus?: readonly string[];
+        hasRsvp?: "yes" | "no";
+      };
       onChange({
         preset: presetId,
-        applicationStatus: preset.filter.applicationStatus
-          ? [...preset.filter.applicationStatus]
+        applicationStatus: filter.applicationStatus
+          ? [...filter.applicationStatus]
           : undefined,
-        hasRsvp: preset.filter.hasRsvp,
+        hasRsvp: filter.hasRsvp,
         searchQuery: value.searchQuery,
       });
     }

@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 import { RESULTS_PER_PAGE } from "@/lib/constants";
 import RsvpTable from "@/components/rsvp/RsvpTable";
 import RsvpFilters from "@/components/rsvp/RsvpFilters";
+import RsvpDownload from "@/components/rsvp/RsvpDownload";
 import DietaryInsights from "@/components/rsvp/DietaryInsights";
 
 interface RsvpPageProps {
@@ -65,7 +66,10 @@ export default async function RsvpPage(props: RsvpPageProps) {
         total={stats.total}
       />
 
-      <RsvpFilters />
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <RsvpFilters />
+        <RsvpDownload />
+      </div>
 
       <RsvpTable rsvps={rsvps} />
 

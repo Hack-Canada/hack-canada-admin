@@ -78,6 +78,11 @@ const STATUS_CONFIG: Record<
     icon: CheckCircle2,
     color: "text-blue-700 bg-blue-100 dark:text-blue-400 dark:bg-blue-950",
   },
+  paused: {
+    label: "Paused",
+    icon: Clock,
+    color: "text-orange-700 bg-orange-100 dark:text-orange-400 dark:bg-orange-950",
+  },
   sending: {
     label: "Sending",
     icon: Send,
@@ -303,7 +308,8 @@ export function CampaignList({ currentUserId, onViewCampaign }: Props) {
                     <TableCell>{getTemplateName(campaign.templateId)}</TableCell>
                     <TableCell>
                       {campaign.status === "completed" ||
-                      campaign.status === "sending" ? (
+                      campaign.status === "sending" ||
+                      campaign.status === "paused" ? (
                         <span className="text-sm">
                           {campaign.sentCount}/{campaign.totalRecipients}
                           {campaign.failedCount > 0 && (

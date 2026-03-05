@@ -25,6 +25,7 @@ export type CampaignStatus =
   | "draft"
   | "pending_approval"
   | "approved"
+  | "paused"
   | "sending"
   | "completed"
   | "failed";
@@ -142,6 +143,26 @@ export async function getCampaignRecipientCounts(campaignId: string) {
     sent: Number(result.sent),
     failed: Number(result.failed),
   };
+}
+
+export async function getAllCampaignRecipientCounts() {
+  const results = await db
+    .select({
+      campaignId: emailCampaignRecipients.campaignId,
+      sent: sql<number>`count(*) filter (where ${emailCampaignRecipients.status} = 'sent')`,
+      failed: sql<number>`count(*) filter (where ${emailCampaignRecipients.status} = 'failed')`,
+    })
+    .from(emailCampaignRecipients)
+    .groupBy(emailCampaignRecipients.campaignId);
+
+  const countsMap: Record<string, { sent: number; failed: number }> = {};
+  for (const row of results) {
+    countsMap[row.campaignId] = {
+      sent: Number(row.sent),
+      failed: Number(row.failed),
+    };
+  }
+  return countsMap;
 }
 
 export async function getPendingRecipientsBatch(

@@ -7,6 +7,7 @@ import {
   updateCampaign,
   deleteCampaign,
   getCampaignRecipients,
+  getCampaignRecipientCounts,
   deleteRecipientsForCampaign,
   queryUsersWithFilter,
   bulkInsertRecipients,
@@ -44,13 +45,18 @@ export async function GET(
       );
     }
 
-    const recipients = await getCampaignRecipients(id);
+    const [recipients, realCounts] = await Promise.all([
+      getCampaignRecipients(id),
+      getCampaignRecipientCounts(id),
+    ]);
 
     return NextResponse.json({
       success: true,
       message: "Campaign fetched successfully",
       data: {
         ...campaign,
+        sentCount: realCounts.sent,
+        failedCount: realCounts.failed,
         recipients,
       },
     });

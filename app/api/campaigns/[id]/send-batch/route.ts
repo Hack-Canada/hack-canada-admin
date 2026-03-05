@@ -39,6 +39,7 @@ type BatchResult = {
 
 const BATCH_SIZE = 200;
 const DELAY_BETWEEN_EMAILS_MS = 150;
+const TIME_LIMIT_MS = 50_000;
 
 async function renderTemplate(
   templateId: string,
@@ -96,7 +97,8 @@ export async function POST(
       );
     }
 
-    if (campaign.status !== "approved" && campaign.status !== "sending") {
+    const validStartStatuses = ["approved", "sending", "paused"];
+    if (!validStartStatuses.includes(campaign.status)) {
       return NextResponse.json(
         {
           success: false,
@@ -106,10 +108,11 @@ export async function POST(
       );
     }
 
-    if (campaign.status === "approved") {
+    if (campaign.status === "approved" || campaign.status === "paused") {
+      const previousStatus = campaign.status;
       await updateCampaign(id, {
         status: "sending",
-        sentAt: new Date(),
+        ...(previousStatus === "approved" && { sentAt: new Date() }),
       });
 
       await createAuditLog({
@@ -117,11 +120,14 @@ export async function POST(
         action: "update",
         entityType: "email_campaign",
         entityId: id,
-        previousValue: { status: "approved" },
-        newValue: { status: "sending", sentAt: new Date() },
+        previousValue: { status: previousStatus },
+        newValue: { status: "sending" },
         metadata: {
-          description: `${user.name || user.email} started sending email campaign "${campaign.subject.slice(0, 50)}..."`,
-          action: "send_started",
+          description:
+            previousStatus === "paused"
+              ? `${user.name || user.email} resumed sending email campaign "${campaign.subject.slice(0, 50)}..."`
+              : `${user.name || user.email} started sending email campaign "${campaign.subject.slice(0, 50)}..."`,
+          action: previousStatus === "paused" ? "send_resumed" : "send_started",
         },
       });
     }
@@ -166,8 +172,15 @@ export async function POST(
 
     let batchSent = 0;
     let batchFailed = 0;
+    const batchStartTime = Date.now();
+    let timedOut = false;
 
     for (const recipient of pendingRecipients) {
+      if (Date.now() - batchStartTime >= TIME_LIMIT_MS) {
+        timedOut = true;
+        break;
+      }
+
       try {
         const firstName = recipient.name.split(" ")[0] || recipient.name;
         const html = await renderTemplate(
@@ -193,10 +206,17 @@ export async function POST(
         batchFailed++;
       }
 
+      if (Date.now() - batchStartTime >= TIME_LIMIT_MS) {
+        timedOut = true;
+        break;
+      }
+
       await delay(DELAY_BETWEEN_EMAILS_MS);
     }
 
-    await incrementCampaignCounts(id, batchSent, batchFailed);
+    if (batchSent > 0 || batchFailed > 0) {
+      await incrementCampaignCounts(id, batchSent, batchFailed);
+    }
 
     const counts = await getCampaignRecipientCounts(id);
     const isComplete = counts.pending === 0;
@@ -220,13 +240,35 @@ export async function POST(
           totalFailed: counts.failed,
         },
       });
+    } else if (timedOut) {
+      await updateCampaign(id, { status: "paused" });
+
+      await createAuditLog({
+        userId: user.id,
+        action: "update",
+        entityType: "email_campaign",
+        entityId: id,
+        previousValue: { status: "sending" },
+        newValue: { status: "paused" },
+        metadata: {
+          description: `Email campaign "${campaign.subject.slice(0, 50)}..." paused due to batch timeout`,
+          action: "send_paused",
+          batchSent,
+          batchFailed,
+          remaining: counts.pending,
+        },
+      });
     }
+
+    const message = isComplete
+      ? "Campaign sending completed"
+      : timedOut
+        ? `Batch timed out after ${batchSent + batchFailed} emails (${batchSent} sent, ${batchFailed} failed). Campaign paused - click Resume to continue.`
+        : `Batch sent: ${batchSent} succeeded, ${batchFailed} failed`;
 
     return NextResponse.json({
       success: true,
-      message: isComplete
-        ? "Campaign sending completed"
-        : `Batch sent: ${batchSent} succeeded, ${batchFailed} failed`,
+      message,
       data: {
         sent: batchSent,
         failed: batchFailed,

@@ -208,7 +208,8 @@ export function CampaignDetail({ campaignId, currentUserId, onBack }: Props) {
     campaign?.status === "pending_approval" &&
     campaign?.createdById !== currentUserId;
 
-  const canSend = campaign?.status === "approved";
+  const canSend =
+    campaign?.status === "approved" || campaign?.status === "paused";
 
   const isSendingOrComplete =
     campaign?.status === "sending" || campaign?.status === "completed";
@@ -351,6 +352,7 @@ export function CampaignDetail({ campaignId, currentUserId, onBack }: Props) {
               totalRecipients={campaign.totalRecipients}
               initialSentCount={campaign.sentCount}
               initialFailedCount={campaign.failedCount}
+              campaignStatus={campaign.status}
               onComplete={fetchCampaign}
             />
           )}
@@ -361,6 +363,7 @@ export function CampaignDetail({ campaignId, currentUserId, onBack }: Props) {
               totalRecipients={campaign.totalRecipients}
               initialSentCount={campaign.sentCount}
               initialFailedCount={campaign.failedCount}
+              campaignStatus={campaign.status}
               onComplete={fetchCampaign}
             />
           )}
@@ -506,6 +509,11 @@ function StatusBadge({ status }: { status: string }) {
       label: "Approved",
       icon: CheckCircle2,
       className: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400",
+    },
+    paused: {
+      label: "Paused",
+      icon: Clock,
+      className: "bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-400",
     },
     sending: {
       label: "Sending",

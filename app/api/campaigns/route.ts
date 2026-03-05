@@ -4,6 +4,7 @@ import { isAdmin } from "@/lib/utils";
 import { campaignCreateSchema } from "@/lib/validations/campaign";
 import {
   getAllCampaigns,
+  getAllCampaignRecipientCounts,
   createCampaign,
   queryUsersWithFilter,
   bulkInsertRecipients,
@@ -35,12 +36,21 @@ export async function GET(): Promise<
       );
     }
 
-    const campaigns = await getAllCampaigns();
+    const [campaigns, realCounts] = await Promise.all([
+      getAllCampaigns(),
+      getAllCampaignRecipientCounts(),
+    ]);
+
+    const enrichedCampaigns = campaigns.map((c) => ({
+      ...c,
+      sentCount: realCounts[c.id]?.sent ?? 0,
+      failedCount: realCounts[c.id]?.failed ?? 0,
+    }));
 
     return NextResponse.json({
       success: true,
       message: "Campaigns fetched successfully",
-      data: campaigns,
+      data: enrichedCampaigns,
     });
   } catch (error) {
     console.error("Error fetching campaigns:", error);

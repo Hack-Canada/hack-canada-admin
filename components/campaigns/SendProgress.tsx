@@ -32,6 +32,7 @@ type Props = {
   totalRecipients: number;
   initialSentCount: number;
   initialFailedCount: number;
+  campaignStatus?: string;
   onComplete: () => void;
 };
 
@@ -40,16 +41,19 @@ export function SendProgress({
   totalRecipients,
   initialSentCount,
   initialFailedCount,
+  campaignStatus,
   onComplete,
 }: Props) {
   const [sentCount, setSentCount] = useState(initialSentCount);
   const [failedCount, setFailedCount] = useState(initialFailedCount);
   const [isSending, setIsSending] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
+  const [isPaused, setIsPaused] = useState(campaignStatus === "paused");
+  const [isComplete, setIsComplete] = useState(campaignStatus === "completed");
   const [error, setError] = useState<string | null>(null);
   const [batchesSent, setBatchesSent] = useState(0);
   const abortRef = useRef(false);
+
+  const hasPartialProgress = initialSentCount > 0 || initialFailedCount > 0;
 
   const progress = Math.round(
     ((sentCount + failedCount) / totalRecipients) * 100,
@@ -163,7 +167,9 @@ export function SendProgress({
         <CardDescription>
           {isComplete
             ? `Successfully sent ${sentCount} emails`
-            : `Sending to ${totalRecipients} recipients`}
+            : hasPartialProgress && !isSending
+              ? `${sentCount + failedCount} of ${totalRecipients} processed, ${remaining} remaining`
+              : `Sending to ${totalRecipients} recipients`}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -237,7 +243,7 @@ export function SendProgress({
             {!isSending && !isPaused && (
               <Button onClick={startSending} className="flex-1">
                 <Play className="mr-2 h-4 w-4" />
-                Start Sending
+                {hasPartialProgress ? "Resume Sending" : "Start Sending"}
               </Button>
             )}
             {isSending && (
@@ -253,7 +259,7 @@ export function SendProgress({
             {isPaused && (
               <Button onClick={resumeSending} className="flex-1">
                 <Play className="mr-2 h-4 w-4" />
-                Resume
+                Resume Sending
               </Button>
             )}
           </div>

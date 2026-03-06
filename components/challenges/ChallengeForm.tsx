@@ -38,6 +38,16 @@ import { ChevronDownIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 
+const CHALLENGE_CATEGORIES = [
+  { value: "sponsor", label: "Sponsor" },
+  { value: "social", label: "Social" },
+  { value: "workshop", label: "Workshop" },
+  { value: "technical", label: "Technical" },
+  { value: "fun", label: "Fun" },
+  { value: "networking", label: "Networking" },
+  { value: "other", label: "Other" },
+] as const;
+
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   category: z.string().min(1, "Category is required"),
@@ -171,9 +181,23 @@ export function ChallengeForm({ challenge, onSuccess }: ChallengeFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Category</FormLabel>
-                <FormControl>
-                  <Input placeholder="Category" {...field} />
-                </FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {CHALLENGE_CATEGORIES.map((category) => (
+                      <SelectItem key={category.value} value={category.value}>
+                        {category.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}

@@ -384,3 +384,17 @@ export const userBalance = pgTable("userBalance", {
 
 export type UserBalance = typeof userBalance.$inferSelect;
 export type NewUserBalance = typeof userBalance.$inferInsert;
+
+export const pointsBannedUsers = pgTable("pointsBannedUsers", {
+  userId: text("userId")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  bannedAt: timestamp("bannedAt")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  bannedBy: text("bannedBy").references(() => users.id),
+  reason: text("reason"),
+});
+
+export type PointsBannedUser = typeof pointsBannedUsers.$inferSelect;
+export type NewPointsBannedUser = typeof pointsBannedUsers.$inferInsert;

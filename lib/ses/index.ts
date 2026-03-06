@@ -185,7 +185,7 @@ export const sendOnboardingEmail = async (
           },
           Subject: {
             Charset: "UTF-8",
-            Data: "🎉 Welcome to - Important Event Information",
+            Data: "Important Links and Information for Hack Canada 2026",
           },
         },
       };

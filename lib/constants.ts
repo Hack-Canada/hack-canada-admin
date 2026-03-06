@@ -41,11 +41,6 @@ export const navLinks: NavigationLink[] = [
     adminOnly: true,
   },
   {
-    name: "Challenge Management",
-    href: "/challenges",
-    adminOnly: true,
-  },
-  {
     name: "RSVP Management",
     href: "/rsvps",
     adminOnly: true,
@@ -63,14 +58,31 @@ export const navLinks: NavigationLink[] = [
   {
     name: "Role Management",
     href: "/role-management",
+    name: "Challenge Management",
+    href: "/challenges",
     adminOnly: true,
   },
-
   {
     name: "Schedule",
     href: "/schedule",
     adminOnly: true,
   },
+  {
+    name: "Emails",
+    href: "/emails",
+    adminOnly: true,
+  },
+  {
+    name: "Banners",
+    href: "/banners",
+    adminOnly: true,
+  },
+  {
+    name: "Role Management",
+    href: "/role-management",
+    adminOnly: true,
+  },
+
   {
     name: "Logs",
     href: "/logs",

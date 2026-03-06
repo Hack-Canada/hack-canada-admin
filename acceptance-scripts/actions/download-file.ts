@@ -2,8 +2,8 @@
 
 import { getCurrentUser } from "@/auth";
 import { db } from "@/lib/db";
-import { users, hackerApplications } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { users, hackerApplications, rsvp } from "@/lib/db/schema";
+import { desc, eq } from "drizzle-orm";
 
 export const getDownloadableFile = async (
   entity: "users" | "applications",
@@ -37,6 +37,38 @@ export const getDownloadableFile = async (
     }
   } catch (error) {
     console.log("Error fetching data for download", error);
+    return [];
+  }
+};
+
+export const getDownloadableRsvpList = async () => {
+  const user = await getCurrentUser();
+
+  if (!user || user.role !== "admin") {
+    return { error: "Unauthorized" };
+  }
+
+  try {
+    const rows = await db
+      .select({
+        name: users.name,
+        email: users.email,
+        tshirtSize: rsvp.tshirtSize,
+        dietaryRestrictions: rsvp.dietaryRestrictions,
+        emergencyContactName: rsvp.emergencyContactName,
+        emergencyContactPhone: rsvp.emergencyContactPhoneNumber,
+        emergencyContactRelation: rsvp.relationshipToParticipant,
+        alternativePhone: rsvp.alternativePhoneNumber,
+        mediaConsent: rsvp.mediaConsent,
+        rsvpDate: rsvp.createdAt,
+      })
+      .from(rsvp)
+      .innerJoin(users, eq(users.id, rsvp.userId))
+      .orderBy(desc(rsvp.createdAt));
+
+    return rows;
+  } catch (error) {
+    console.log("Error fetching RSVP data for download", error);
     return [];
   }
 };

@@ -1,22 +1,42 @@
 import { RESULTS_PER_PAGE } from "@/lib/constants";
 import { db } from "@/lib/db";
-import { users } from "@/lib/db/schema";
+import { users, accounts } from "@/lib/db/schema";
 import { and, count, desc, eq, ilike, or } from "drizzle-orm";
 
 type User = typeof users.$inferSelect;
 
+export type UserWithAccounts = User & {
+  accounts: Array<{
+    provider: string;
+    type: string;
+  }>;
+};
+
 /**
- * Retrieves a user by their ID from the database.
+ * Retrieves a user by their ID from the database with their OAuth accounts.
  *
  * @param {string} id - The ID of the user to retrieve.
- * @return {Promise<User | null>} The user object if found, otherwise null.
+ * @return {Promise<UserWithAccounts | null>} The user object with accounts if found, otherwise null.
  */
-export const getUserById: (id: string) => Promise<User | null> = async (
+export const getUserById: (id: string) => Promise<UserWithAccounts | null> = async (
   id: string,
-): Promise<User | null> => {
+): Promise<UserWithAccounts | null> => {
   try {
     const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user;
+    if (!user) return null;
+
+    const userAccounts = await db
+      .select({
+        provider: accounts.provider,
+        type: accounts.type,
+      })
+      .from(accounts)
+      .where(eq(accounts.userId, id));
+
+    return {
+      ...user,
+      accounts: userAccounts,
+    };
   } catch (error) {
     console.log("Error fetching user with ID: " + id, error);
     return null;

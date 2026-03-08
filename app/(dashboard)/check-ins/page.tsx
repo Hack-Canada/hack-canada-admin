@@ -14,6 +14,7 @@ import { redirect } from "next/navigation";
 import { RESULTS_PER_PAGE } from "@/lib/constants";
 import CheckInTable from "@/components/check-ins/CheckInTable";
 import CheckInFilters from "@/components/check-ins/CheckInFilters";
+import CheckInDownload from "@/components/check-ins/CheckInDownload";
 
 interface CheckInPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -62,7 +63,10 @@ export default async function CheckInPage(props: CheckInPageProps) {
         ))}
       </div>
 
-      <CheckInFilters events={events} />
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <CheckInFilters events={events} />
+        <CheckInDownload filters={filters} />
+      </div>
 
       <CheckInTable checkIns={checkInList} />
 

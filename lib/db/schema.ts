@@ -398,6 +398,7 @@ export const pointsBannedUsers = pgTable("pointsBannedUsers", {
 
 export type PointsBannedUser = typeof pointsBannedUsers.$inferSelect;
 export type NewPointsBannedUser = typeof pointsBannedUsers.$inferInsert;
+
 export const banners = pgTable("banner", {
   id: text("id")
     .primaryKey()
@@ -470,3 +471,45 @@ export const emailCampaignRecipients = pgTable("emailCampaignRecipient", {
 
 export type EmailCampaignRecipient = typeof emailCampaignRecipients.$inferSelect;
 export type NewEmailCampaignRecipient = typeof emailCampaignRecipients.$inferInsert;
+
+export const shopItems = pgTable("shopItem", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text("name").notNull(),
+  description: text("description"),
+  imageUrl: text("imageUrl"),
+  pointsCost: integer("pointsCost").notNull(),
+  stock: integer("stock").notNull().default(0),
+  maxPerUser: integer("maxPerUser").default(1),
+  enabled: boolean("enabled").notNull().default(true),
+  createdAt: timestamp("createdAt")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: timestamp("updatedAt")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+});
+
+export type ShopItem = typeof shopItems.$inferSelect;
+export type NewShopItem = typeof shopItems.$inferInsert;
+
+export const shopPurchases = pgTable("shopPurchase", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  itemId: text("itemId")
+    .notNull()
+    .references(() => shopItems.id, { onDelete: "cascade" }),
+  pointsSpent: integer("pointsSpent").notNull(),
+  redeemedAt: timestamp("redeemedAt"),
+  createdAt: timestamp("createdAt")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+});
+
+export type ShopPurchase = typeof shopPurchases.$inferSelect;
+export type NewShopPurchase = typeof shopPurchases.$inferInsert;

@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/auth";
 import { db } from "@/lib/db";
 import { users, hackerApplications, rsvp } from "@/lib/db/schema";
 import { desc, eq } from "drizzle-orm";
+import { getAllCheckInsForDownload } from "@/data/check-ins";
 
 export const getDownloadableFile = async (
   entity: "users" | "applications",
@@ -69,6 +70,26 @@ export const getDownloadableRsvpList = async () => {
     return rows;
   } catch (error) {
     console.log("Error fetching RSVP data for download", error);
+    return [];
+  }
+};
+
+export const getDownloadableCheckIns = async (filters?: {
+  name?: string;
+  eventName?: string;
+}) => {
+  const user = await getCurrentUser();
+
+  if (!user || user.role !== "admin") {
+    return {
+      error: "Unauthorized",
+    };
+  }
+
+  try {
+    return await getAllCheckInsForDownload(filters);
+  } catch (error) {
+    console.log("Error fetching check-ins for download", error);
     return [];
   }
 };

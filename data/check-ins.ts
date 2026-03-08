@@ -100,3 +100,37 @@ export const getCheckInStats = async () => {
     return { total: 0, events: [] };
   }
 };
+
+export const getAllCheckInsForDownload = async (filters?: {
+  name?: string;
+  eventName?: string;
+}) => {
+  try {
+    const conditions = [];
+
+    if (filters?.name) {
+      conditions.push(ilike(users.name, `%${filters.name}%`));
+    }
+    if (filters?.eventName && filters.eventName !== "all") {
+      conditions.push(eq(checkIns.eventName, filters.eventName));
+    }
+
+    return await db
+      .select({
+        id: checkIns.id,
+        eventName: checkIns.eventName,
+        checkedInAt: checkIns.createdAt,
+        userId: checkIns.userId,
+        userName: users.name,
+        userEmail: users.email,
+        userRole: users.role,
+      })
+      .from(checkIns)
+      .innerJoin(users, eq(users.id, checkIns.userId))
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .orderBy(desc(checkIns.createdAt));
+  } catch (error) {
+    console.log("Error fetching all check-ins for download", error);
+    return [];
+  }
+};

@@ -56,6 +56,11 @@ export const navLinks: NavigationLink[] = [
     adminOnly: true,
   },
   {
+    name: "Shop Management",
+    href: "/shop",
+    adminOnly: true,
+  },
+  {
     name: "Role Management",
     href: "/role-management",
     adminOnly: true,
